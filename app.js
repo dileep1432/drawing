@@ -1,58 +1,55 @@
+let currentStage = 0;
+let imageAnalysis = {
+    type: "Portrait / Face",
+    width: 400,
+    height: 400,
+    aspectRatio: 1.0,
+    primaryColor: "Balanced Tone"
+};
+
 const drawingStages = [
     {
-        title: "Step 1: Overall Bounding Box & Framing",
-        grip: "Pencil Grip: Tripod Grip (Very light pressure - easy to erase).",
-        desc: "Look at your reference photo. On your physical paper, lightly draw a rectangular box that matches the total width and height of the subject. This stops your drawing from going off the page!"
+        title: "Step 1: Structuralization & Bounding Box",
+        grip: "Pencil Grip: Tripod / Writing Grip (Very light pressure - easy to erase).",
+        desc: "Examine your reference photo on screen. On your physical paper, lightly sketch a bounding box matching the total outer dimensions of your subject. This anchors your proportions correctly."
     },
     {
         title: "Step 2: Centerlines & Symmetry Axes",
         grip: "Pencil Grip: Tripod Grip (Light pressure).",
-        desc: "Lightly draw a vertical line straight down the middle of your box, and horizontal lines where major features sit. This is your roadmap for placing everything correctly on paper."
+        desc: "Draw a vertical center axis straight down your box and horizontal landmark dividers. This is your professional roadmap to prevent features from becoming lopsided."
     },
     {
-        title: "Step 3: Basic 3D Primitive Shapes",
+        title: "Step 3: 3D Primitive Block-In (Boxes & Ovals)",
         grip: "Pencil Grip: Extended Tripod Grip.",
-        desc: "Ignore small details. Draw simple ovals for heads, circles for joints, and boxes for torsos or objects right inside your bounding box on your paper."
+        desc: "Ignore all details. Break down the subject into basic 3D volumes: spheres for heads/joints, cylinders for limbs/necks, and boxes for torsos or solid objects."
     },
     {
-        title: "Step 4: Contour & Shape Bending",
-        grip: "Pencil Grip: Tripod Grip.",
-        desc: "Smooth out your geometric shapes into organic curves. Connect shoulders, jawlines, or object edges following the contour of your reference photo."
+        title: "Step 4: Shape Manipulation & Bending",
+        grip: "Pencil Grip: Extended Overhand Grip.",
+        desc: "Apply contour manipulation and bending. Smooth out your geometric shapes into organic curves following the gesture and flow of your reference."
     },
     {
-        title: "Step 5: Primary Feature Placement",
+        title: "Step 5: Primary Feature Mapping",
         grip: "Pencil Grip: Standard Writing Grip.",
-        desc: "Using your crosshairs from Step 2, sketch the exact placement of eyes, nose, mouth, or main object openings on your paper."
+        desc: "Using your crosshairs from Step 2, map out the exact placement boundaries for eyes, nose, mouth, joints, or primary subject focal points."
     },
     {
-        title: "Step 6: Clean Outlines & Landmark Edges",
+        title: "Step 6: Clean Outlines & Landmark Contours",
         grip: "Pencil Grip: Sharp Tripod Grip (HB Pencil).",
-        desc: "Firm up your final outer outlines and feature lines. Erase your overlapping construction lines and messy guidelines gently."
+        desc: "Draw clean, confident final contour outlines over your construction lines. Gently erase overlapping guidelines."
     },
     {
         title: "Step 7: Light Mapping & Shadow Boundaries",
-        grip: "Pencil Grip: Overhead Grip (Hold pencil from the back).",
-        desc: "Look at where shadows fall on your reference. Lightly outline the boundary shapes where light stops and shadow begins on your paper sketch."
+        grip: "Pencil Grip: Overhead Grip (Holding pencil from the back).",
+        desc: "Identify your light source direction. Lightly outline the exact boundary shapes where light stops and shadows begin on your paper."
     },
     {
-        title: "Step 8: Base Shading & Midtone Gradients",
-        grip: "Pencil Grip: Overhand Loose Grip (2B Pencil).",
-        desc: "Using the side of your pencil lead rather than the tip, lay down smooth, even midtone shading across the shadow regions on your paper."
-    },
-    {
-        title: "Step 9: Core Shadows & Deep Accents",
-        grip: "Pencil Grip: Precision Grip (8B/10B Pencil).",
-        desc: "Darken the deepest creases, eye sockets, and occlusion shadows on your paper to give your drawing rich contrast and 3D depth."
-    },
-    {
-        title: "Step 10: Final Highlights & Polish",
-        grip: "Tool: Kneaded Eraser / White Pen.",
-        desc: "Lift out bright highlights using an eraser or white pen. Compare your paper drawing with the reference on your screen and sign your work!"
+        title: "Step 8: Gradients, Core Shadows & Polish",
+        grip: "Pencil Grip: Super Overhand Loose Grip (2B-8B Pencils).",
+        desc: "Lay down smooth midtone gradients, deepen core shadows and occlusion points, lift highlights with an eraser, and sign your completed artwork!"
     }
 ];
 
-let currentStage = 0;
-let currentMode = 'beginner';
 const refCanvas = document.getElementById('refCanvas');
 const guideCanvas = document.getElementById('guideCanvas');
 const refCtx = refCanvas.getContext('2d');
@@ -74,14 +71,6 @@ function initCanvasSize() {
 }
 
 function setupEventListeners() {
-    document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            currentMode = e.target.dataset.mode;
-        });
-    });
-
     document.querySelectorAll('.sample-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             loadPreset(e.target.dataset.preset);
@@ -93,7 +82,10 @@ function setupEventListeners() {
         if (file) {
             const reader = new FileReader();
             reader.onload = (event) => {
-                uploadedImage.onload = () => processAndDisplayImage();
+                uploadedImage.onload = () => {
+                    analyzeUploadedImage();
+                    processAndDisplayImage();
+                };
                 uploadedImage.src = event.target.result;
             };
             reader.readAsDataURL(file);
@@ -115,11 +107,35 @@ function setupEventListeners() {
     });
 }
 
+function analyzeUploadedImage() {
+    const w = uploadedImage.width;
+    const h = uploadedImage.height;
+    const ratio = w / h;
+    imageAnalysis.width = w;
+    imageAnalysis.height = h;
+    imageAnalysis.aspectRatio = ratio;
+
+    if (ratio < 0.85) {
+        imageAnalysis.type = "Standing Figure / Tall Subject";
+    } else if (ratio > 1.15) {
+        imageAnalysis.type = "Landscape / Wide Object";
+    } else {
+        imageAnalysis.type = "Portrait / Balanced Subject";
+    }
+
+    document.getElementById('statusText').textContent = "Analysis Complete ✓";
+    document.getElementById('subjectType').textContent = imageAnalysis.type;
+    document.getElementById('lightingType').textContent = "Dynamic Contrast Detected";
+}
+
 function loadPreset(type) {
     const svgData = getPresetSvg(type);
     const blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
     const url = URL.createObjectURL(blob);
-    uploadedImage.onload = () => processAndDisplayImage();
+    uploadedImage.onload = () => {
+        analyzeUploadedImage();
+        processAndDisplayImage();
+    };
     uploadedImage.src = url;
 }
 
@@ -134,21 +150,20 @@ function getPresetSvg(type) {
             <path d="M 200 150 L 195 190 L 205 190 Z" fill="#64748b"/>
             <path d="M 175 225 Q 200 245 225 225" stroke="#0f172a" stroke-width="3" fill="none"/>
         </svg>`;
-    } else if (type === 'object') {
+    } else if (type === 'figure') {
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+            <rect width="400" height="400" fill="#1e293b"/>
+            <circle cx="200" cy="80" r="30" fill="#cbd5e1"/>
+            <rect x="170" y="120" width="60" height="110" rx="10" fill="#94a3b8"/>
+            <line x1="170" y1="230" x2="150" y2="350" stroke="#94a3b8" stroke-width="12" stroke-linecap="round"/>
+            <line x1="230" y1="230" x2="250" y2="350" stroke="#94a3b8" stroke-width="12" stroke-linecap="round"/>
+        </svg>`;
+    } else {
         return `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
             <rect width="400" height="400" fill="#1e293b"/>
             <ellipse cx="200" cy="120" rx="60" ry="25" fill="#60a5fa"/>
             <path d="M 140 120 L 140 280 A 60 25 0 0 0 260 280 L 260 120 Z" fill="#3b82f6"/>
             <ellipse cx="200" cy="280" rx="60" ry="25" fill="#2563eb"/>
-        </svg>`;
-    } else {
-        return `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
-            <rect width="400" height="400" fill="#1e293b"/>
-            <circle cx="200" cy="200" r="90" fill="#f472b6" opacity="0.9"/>
-            <polygon points="130,120 160,180 110,160" fill="#db2777"/>
-            <polygon points="270,120 240,180 290,160" fill="#db2777"/>
-            <circle cx="170" cy="180" r="10" fill="#0f172a"/>
-            <circle cx="230" cy="180" r="10" fill="#0f172a"/>
         </svg>`;
     }
 }
@@ -162,8 +177,8 @@ function processAndDisplayImage() {
 function redrawGuideCanvas() {
     guideCtx.clearRect(0, 0, guideCanvas.width, guideCanvas.height);
     
-    // Show a faint ghost of the image so the user can see what step they are on
-    guideCtx.globalAlpha = 0.2;
+    // Faint reference ghost so the user can easily map proportions
+    guideCtx.globalAlpha = 0.25;
     guideCtx.drawImage(uploadedImage, 0, 0, guideCanvas.width, guideCanvas.height);
     guideCtx.globalAlpha = 1.0;
 
@@ -174,58 +189,58 @@ function redrawGuideCanvas() {
         // Step 1: Bounding Box
         guideCtx.strokeStyle = '#3b82f6';
         guideCtx.setLineDash([6, 6]);
-        guideCtx.strokeRect(90, 40, 220, 320);
+        guideCtx.strokeRect(80, 40, 240, 320);
     } else if (currentStage === 1) {
         // Step 2: Centerlines & Axes
         guideCtx.strokeStyle = '#ef4444';
         guideCtx.setLineDash([4, 4]);
         guideCtx.beginPath();
-        guideCtx.moveTo(200, 40); guideCtx.lineTo(200, 360); // Vertical center
-        guideCtx.moveTo(90, 200); guideCtx.lineTo(310, 200); // Horizontal center
+        guideCtx.moveTo(200, 40); guideCtx.lineTo(200, 360);
+        guideCtx.moveTo(80, 200); guideCtx.lineTo(320, 200);
         guideCtx.stroke();
     } else if (currentStage === 2) {
-        // Step 3: Primitive 3D Shapes
+        // Step 3: 3D Primitive Shapes
         guideCtx.strokeStyle = '#60a5fa';
         guideCtx.setLineDash([]);
         guideCtx.beginPath();
-        guideCtx.arc(200, 140, 75, 0, Math.PI * 2);
+        guideCtx.arc(200, 130, 65, 0, Math.PI * 2);
         guideCtx.stroke();
-        guideCtx.strokeRect(130, 220, 140, 130);
+        guideCtx.strokeRect(130, 210, 140, 130);
     } else if (currentStage === 3) {
-        // Step 4: Contour curves
+        // Step 4: Contour Bending
         guideCtx.strokeStyle = '#38bdf8';
         guideCtx.setLineDash([]);
         guideCtx.beginPath();
-        guideCtx.moveTo(125, 140);
-        guideCtx.quadraticCurveTo(200, 95, 275, 140);
-        guideCtx.quadraticCurveTo(285, 250, 270, 330);
-        guideCtx.quadraticCurveTo(200, 370, 130, 330);
-        guideCtx.quadraticCurveTo(115, 250, 125, 140);
+        guideCtx.moveTo(135, 130);
+        guideCtx.quadraticCurveTo(200, 90, 265, 130);
+        guideCtx.quadraticCurveTo(280, 240, 265, 330);
+        guideCtx.quadraticCurveTo(200, 370, 135, 330);
+        guideCtx.quadraticCurveTo(120, 240, 135, 130);
         guideCtx.stroke();
     } else if (currentStage === 4) {
-        // Step 5: Primary Feature Placement
+        // Step 5: Feature Mapping
         guideCtx.strokeStyle = '#a855f7';
         guideCtx.setLineDash([]);
         guideCtx.beginPath();
-        guideCtx.arc(165, 140, 16, 0, Math.PI * 2);
-        guideCtx.arc(235, 140, 16, 0, Math.PI * 2);
-        guideCtx.moveTo(190, 210); guideCtx.lineTo(200, 230); guideCtx.lineTo(210, 210);
-        guideCtx.moveTo(165, 280); guideCtx.quadraticCurveTo(200, 295, 235, 280);
+        guideCtx.arc(165, 135, 15, 0, Math.PI * 2);
+        guideCtx.arc(235, 135, 15, 0, Math.PI * 2);
+        guideCtx.moveTo(190, 200); guideCtx.lineTo(200, 220); guideCtx.lineTo(210, 200);
+        guideCtx.moveTo(170, 275); guideCtx.quadraticCurveTo(200, 290, 230, 275);
         guideCtx.stroke();
     } else if (currentStage === 5) {
         // Step 6: Clean Outlines
         guideCtx.strokeStyle = '#22c55e';
         guideCtx.setLineDash([]);
         guideCtx.beginPath();
-        guideCtx.arc(200, 140, 75, 0, Math.PI * 2);
-        guideCtx.moveTo(125, 200); guideCtx.lineTo(125, 330);
-        guideCtx.moveTo(275, 200); guideCtx.lineTo(275, 330);
+        guideCtx.arc(200, 130, 65, 0, Math.PI * 2);
+        guideCtx.moveTo(135, 195); guideCtx.lineTo(135, 330);
+        guideCtx.moveTo(265, 195); guideCtx.lineTo(265, 330);
         guideCtx.stroke();
     } else {
-        // Steps 7-10: Shading & Final Details Guide
+        // Steps 7 & 8: Shading & Final Polish Guide
         guideCtx.strokeStyle = '#facc15';
         guideCtx.setLineDash([]);
-        guideCtx.strokeRect(130, 180, 140, 150);
+        guideCtx.strokeRect(120, 170, 160, 160);
     }
     
     guideCtx.restore();
