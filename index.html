@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Paper Drawing Tutor & Masterclass</title>
+    <title>AI Professional Paper Drawing Tutor</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
 </head>
 <body>
     <header class="app-header">
-        <div class="logo">🎨 AI Paper Drawing Tutor</div>
+        <div class="logo">🎨 AI Pro Drawing Masterclass</div>
         <nav class="mode-selector">
-            <button class="mode-btn active" data-mode="beginner">👶 Kids & Beginner</button>
-            <button class="mode-btn" data-mode="pencil">✏️ Realistic Pencil</button>
-            <button class="mode-btn" data-mode="pen">✒️ Pen & Ink</button>
+            <button class="mode-btn active" data-mode="pro">🎓 Pro Masterclass</button>
+            <button class="mode-btn" data-mode="anatomy">👤 Figure & Portrait</button>
+            <button class="mode-btn" data-mode="render">✏️ Realistic Shading</button>
         </nav>
     </header>
 
@@ -22,37 +22,38 @@
         <!-- Sidebar Controls -->
         <section class="control-panel">
             <div class="card upload-card">
-                <h2>1. Upload Your Image</h2>
+                <h2>1. Upload Your Reference</h2>
                 <input type="file" id="imageInput" accept="image/*">
-                <p class="hint">Upload any photo you want to draw on your paper!</p>
+                <p class="hint">Upload any photo — the AI will auto-recognize its structure and build custom drawing steps!</p>
                 <div class="sample-buttons">
                     <button class="sample-btn" data-preset="portrait">Portrait</button>
-                    <button class="sample-btn" data-preset="object">Cylinder/Object</button>
-                    <button class="sample-btn" data-preset="animal">Animal</button>
+                    <button class="sample-btn" data-preset="figure">Human Figure</button>
+                    <button class="sample-btn" data-preset="object">Cylinder / Object</button>
+                </div>
+            </div>
+
+            <div class="card analysis-card">
+                <h2>AI Image Recognition</h2>
+                <div id="analysisStats" class="analysis-stats">
+                    <p>Status: <span id="statusText">Ready for image upload</span></p>
+                    <p>Subject Type: <span id="subjectType">General Reference</span></p>
+                    <p>Lighting: <span id="lightingType">Standard Studio</span></p>
                 </div>
             </div>
 
             <div class="card steps-card">
-                <h2>2. Step-by-Step Drawing Stages</h2>
+                <h2>2. Step-by-Step Paper Guide</h2>
                 <div id="stagesList" class="stages-list"></div>
-            </div>
-
-            <div class="card tools-card">
-                <h2>3. Pencil Grip & Technique</h2>
-                <div id="techniqueTip" class="technique-tip">
-                    <p><strong>Recommended Grip:</strong> <span id="gripName">Tripod (Writing) Grip</span></p>
-                    <p id="gripDesc">Hold lightly with fingers for clean construction lines on your paper.</p>
-                </div>
             </div>
         </section>
 
-        <!-- Main Workspace for Paper Guide -->
+        <!-- Main Workspace -->
         <section class="workspace">
             <div class="workspace-header">
-                <span id="stageTitle">Step 1: Overall Framing & Proportions</span>
+                <span id="stageTitle">Step 1: Structuralization & Bounding Framing</span>
                 <div class="nav-buttons">
                     <button id="prevBtn" class="btn">◀ Prev Step</button>
-                    <span id="stepIndicator">1 / 10</span>
+                    <span id="stepIndicator">1 / 8</span>
                     <button id="nextBtn" class="btn primary">Next Step ▶</button>
                 </div>
             </div>
@@ -65,7 +66,7 @@
                     </div>
                 </div>
                 <div class="pane">
-                    <h3>Paper Sketch Guide (Copy this onto your paper)</h3>
+                    <h3>Paper Construction Guide (Draw this on your paper)</h3>
                     <div class="canvas-wrapper">
                         <canvas id="guideCanvas"></canvas>
                     </div>
@@ -73,9 +74,9 @@
             </div>
 
             <div class="card instruction-card">
-                <h3>How to draw this step on your paper:</h3>
+                <h3 id="instructionHeading">Masterclass Technique & Paper Instruction</h3>
                 <p id="gripTipText" class="tip-box">Pencil Grip: Tripod / Writing Grip (Very light pressure).</p>
-                <p id="instructionText">Lightly sketch a bounding box and centerlines on your paper to lock in the height and width of your subject.</p>
+                <p id="instructionText">Upload an image above to generate custom step-by-step instructions tailored specifically to your subject!</p>
             </div>
         </section>
     </main>
