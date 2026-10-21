@@ -1,53 +1,43 @@
 const drawingStages = [
     {
-        title: "Stage 1: Structuralization & Basic Shapes",
-        tip: "Pencil Grip: Tripod / Writing Grip (Light pressure).",
-        desc: "Don't look at details yet. Break down your subject into simple 3D primitives: cylinders, boxes, spheres, and ovals. Establish spatial awareness and overall proportions on your page."
+        title: "Step 1: Overall Framing & Proportions",
+        desc: "Trace the outer bounding box and central balance axes. This locks in the height and width so your drawing never looks distorted or out of place."
     },
     {
-        title: "Stage 2: Shape Manipulation & Bending",
-        tip: "Pencil Grip: Extended Tripod Grip.",
-        desc: "Apply contour manipulation, bending, or stretching to your primitive shapes to match organic curves (like a bent cylinder for a neck or arm, or a tapered box for a torso)."
+        title: "Step 2: Primitive 3D Block-In",
+        desc: "Draw basic ovals, boxes, and cylinders over the main body masses. Ignore all details here—only focus on the underlying 3D structure."
     },
     {
-        title: "Stage 3: Observation & Landmark Outlines",
-        tip: "Pencil Grip: Tripod Grip (Sharp point).",
-        desc: "Observe the reference without being manipulated by details. Sketch clean landmark boundaries, outer silhouettes, and major structural contours."
+        title: "Step 3: Contour & Bending Curves",
+        desc: "Refine the outer silhouette. Smooth out the geometric boxes into organic curves, neck angles, and shoulder slopes."
     },
     {
-        title: "Stage 4: Centerlines & Internal Features",
-        tip: "Pencil Grip: Standard Tripod Grip.",
-        desc: "Map out secondary features (eyes, nose, lips, joints, or interior panels) using center guidelines and symmetry axes to ensure nothing is crooked or out of proportion."
+        title: "Step 4: Centerlines & Landmark Placement",
+        desc: "Draw your vertical and horizontal crosshairs where eyes, nose, mouth, or central features intersect."
     },
     {
-        title: "Stage 5: Light Source & Shadow Mapping",
-        tip: "Pencil Grip: Overhead Grip (Holding from the back).",
-        desc: "Identify where your primary light source is coming from. Lightly outline your highlight zones, midtones, core shadow boundaries, and cast shadows."
+        title: "Step 5: Primary Feature Outlines",
+        desc: "Draw clean, confident contour lines for the eyes, nose, lips, hair partition, or primary object edges."
     },
     {
-        title: "Stage 6: Base Shading & Midtones (Overhand)",
-        tip: "Pencil Grip: Super Overhand Loose Grip.",
-        desc: "Hold your pencil from the back using your whole arm (not just your wrist) to lay down smooth, uniform midtone gradient layers across shadow areas without harsh lines."
+        title: "Step 6: Shadow Boundary Mapping",
+        desc: "Outline the exact shapes where light stops and shadows begin. Separating light from shadow is the secret to realism."
     },
     {
-        title: "Stage 7: Core Shadows & Occlusion",
-        tip: "Pencil Grip: Extended Tripod / 2B-4B Pencil.",
-        desc: "Deepen core shadows and occlusion shadows (where objects touch or overlap) to create realistic 3D weight, depth, and volume."
+        title: "Step 7: Base Gradient Shading",
+        desc: "Fill in midtones and secondary shadows using smooth, even strokes (overhand pencil grip)."
     },
     {
-        title: "Stage 8: Fine Details & Textures",
-        tip: "Pencil Grip: Precision Tripod Grip (Sharp 8B/10B).",
-        desc: "Add fine textures, hair strands, skin gradients, or cross-hatching. Keep strokes flowing in the natural direction of the subject's form."
+        title: "Step 8: Core Shadows & Deep Accents",
+        desc: "Darken the deepest recesses, occlusion points, and core shadows to give your drawing genuine weight and pop."
     },
     {
-        title: "Stage 9: Highlights & Edge Cleanup",
-        tip: "Tool: Kneaded Eraser / White Gel Pen.",
-        desc: "Lift out glowing highlights using a sharpened eraser or add bright specular reflections with a white gel pen. Clean up messy background smudges."
+        title: "Step 9: Highlights & Specular Reflections",
+        desc: "Lift out highlights with an eraser or add bright white strokes where light hits directly."
     },
     {
-        title: "Stage 10: Final Masterpiece Review",
-        tip: "Review Step: Stand back and compare contrast.",
-        desc: "Check your overall tonal contrast, edge control, and proportions against the reference. Your complete masterclass drawing is now finished!"
+        title: "Step 10: Final Polish & Masterpiece",
+        desc: "Clean up smudges, check overall contrast, and sign your finished drawing!"
     }
 ];
 
@@ -82,7 +72,6 @@ function setupEventListeners() {
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
             currentMode = e.target.dataset.mode;
-            updateTechniqueInfo();
         });
     });
 
@@ -145,7 +134,7 @@ function setupEventListeners() {
 
     document.getElementById('saveProgress').addEventListener('click', () => {
         const link = document.createElement('a');
-        link.download = `drawing-stage-${currentStage + 1}.png`;
+        link.download = `drawing-step-${currentStage + 1}.png`;
         link.href = drawCanvas.toDataURL();
         link.click();
     });
@@ -256,30 +245,63 @@ function redrawStageCanvas() {
     drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
     
     drawCtx.save();
-    drawCtx.strokeStyle = 'rgba(96, 165, 250, 0.7)';
-    drawCtx.lineWidth = 2;
-    drawCtx.setLineDash([6, 6]);
-
+    
+    // Progressive tracing guide drawn directly onto the practice canvas
     if (currentStage === 0) {
-        drawCtx.strokeRect(125, 75, 150, 210);
-        drawCtx.beginPath();
-        drawCtx.arc(200, 150, 70, 0, Math.PI * 2);
-        drawCtx.stroke();
+        // Step 1: Bounding Box
+        drawCtx.strokeStyle = '#3b82f6';
+        drawCtx.lineWidth = 2;
+        drawCtx.setLineDash([4, 4]);
+        drawCtx.strokeRect(100, 50, 200, 300);
     } else if (currentStage === 1) {
+        // Step 2: 3D Primitive Shapes
+        drawCtx.strokeStyle = '#60a5fa';
+        drawCtx.lineWidth = 2;
         drawCtx.beginPath();
-        drawCtx.moveTo(200, 60); drawCtx.quadraticCurveTo(220, 200, 200, 340);
-        drawCtx.moveTo(120, 150); drawCtx.quadraticCurveTo(200, 130, 280, 150);
+        drawCtx.arc(200, 140, 75, 0, Math.PI * 2);
         drawCtx.stroke();
-    } else if (currentStage === 2 || currentStage === 3) {
+        drawCtx.strokeRect(130, 215, 140, 120);
+    } else if (currentStage === 2) {
+        // Step 3: Contour & Bending curves
+        drawCtx.strokeStyle = '#38bdf8';
+        drawCtx.lineWidth = 2;
         drawCtx.beginPath();
-        drawCtx.moveTo(200, 50); drawCtx.lineTo(200, 350);
-        drawCtx.moveTo(80, 150); drawCtx.lineTo(320, 150);
-        drawCtx.moveTo(80, 220); drawCtx.lineTo(320, 220);
+        drawCtx.moveTo(125, 140);
+        drawCtx.quadraticCurveTo(200, 100, 275, 140);
+        drawCtx.quadraticCurveTo(280, 250, 270, 320);
+        drawCtx.quadraticCurveTo(200, 350, 130, 320);
+        drawCtx.quadraticCurveTo(120, 250, 125, 140);
+        drawCtx.stroke();
+    } else if (currentStage === 3) {
+        // Step 4: Center Guidelines & Crosshairs
+        drawCtx.strokeStyle = '#f43f5e';
+        drawCtx.lineWidth = 1.5;
+        drawCtx.setLineDash([2, 2]);
+        drawCtx.beginPath();
+        drawCtx.moveTo(200, 50); drawCtx.lineTo(200, 350); // Vertical center
+        drawCtx.moveTo(100, 140); drawCtx.lineTo(300, 140); // Eye line
+        drawCtx.moveTo(100, 220); drawCtx.lineTo(300, 220); // Nose line
+        drawCtx.moveTo(100, 280); drawCtx.lineTo(300, 280); // Lip line
+        drawCtx.stroke();
+    } else if (currentStage === 4) {
+        // Step 5: Exact Feature Outlines (Eyes, Nose, Mouth)
+        drawCtx.strokeStyle = '#a855f7';
+        drawCtx.lineWidth = 2;
+        drawCtx.setLineDash([]);
+        drawCtx.beginPath();
+        // Eyes
+        drawCtx.arc(165, 140, 15, 0, Math.PI * 2);
+        drawCtx.arc(235, 140, 15, 0, Math.PI * 2);
+        // Nose & Mouth
+        drawCtx.moveTo(190, 210); drawCtx.lineTo(200, 230); drawCtx.lineTo(210, 210);
+        drawCtx.moveTo(170, 280); drawCtx.quadraticCurveTo(200, 295, 230, 280);
         drawCtx.stroke();
     } else {
-        drawCtx.globalAlpha = 0.3;
+        // Steps 6-10: Faint ghost reference overlay for precise shading & tracing practice
+        drawCtx.globalAlpha = 0.35;
         drawCtx.drawImage(uploadedImage, 0, 0, drawCanvas.width, drawCanvas.height);
     }
+    
     drawCtx.restore();
 }
 
@@ -300,24 +322,9 @@ function renderStagesList() {
 
 function updateStage() {
     document.getElementById('stageTitle').textContent = drawingStages[currentStage].title;
-    document.getElementById('gripTipText').textContent = drawingStages[currentStage].tip;
+    document.getElementById('gripTipText').textContent = `Step-by-Step Drawing Guide`;
     document.getElementById('instructionText').textContent = drawingStages[currentStage].desc;
     document.getElementById('stepIndicator').textContent = `${currentStage + 1} / ${drawingStages.length}`;
     renderStagesList();
     redrawStageCanvas();
-}
-
-function updateTechniqueInfo() {
-    const name = document.getElementById('gripName');
-    const desc = document.getElementById('gripDesc');
-    if (currentMode === 'beginner') {
-        name.textContent = "Tripod Grip (Writing Grip)";
-        desc.textContent = "Best for simple outlines, basic shapes, and clear step-by-step kid-friendly tracing.";
-    } else if (currentMode === 'pencil') {
-        name.textContent = "Overhead & Extended Overhand Grip";
-        desc.textContent = "Hold pencil from the back with your whole arm for smooth gradients, shadow mapping, and 3D volume.";
-    } else {
-        name.textContent = "Precision Pen & Hatching Grip";
-        desc.textContent = "Firm control for clean ink contours, cross-hatching, stippling, and sharp high-contrast accents.";
-    }
 }
