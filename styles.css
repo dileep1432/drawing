@@ -50,9 +50,7 @@ body {
     font-weight: 600;
 }
 
-.mode-btn:hover, .sample-btn:hover, .btn:hover {
-    background: var(--border);
-}
+.mode-btn:hover, .sample-btn:hover, .btn:hover { background: var(--border); }
 
 .app-container {
     display: grid;
@@ -75,23 +73,30 @@ body {
 
 .card h2, .card h3 { font-size: 1.1rem; margin-bottom: 0.75rem; color: #93c5fd; }
 .upload-card input[type="file"] { width: 100%; margin-bottom: 0.5rem; color: var(--text-muted); }
-.hint { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+.hint { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem; line-height: 1.4; }
 .sample-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.analysis-stats p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+}
+.analysis-stats span { color: #60a5fa; font-weight: 600; }
 
 .stages-list {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    max-height: 280px;
+    gap: 0.4rem;
+    max-height: 240px;
     overflow-y: auto;
 }
 
 .stage-item {
-    padding: 0.6rem 0.75rem;
+    padding: 0.5rem 0.75rem;
     background: var(--card-bg);
     border-radius: 0.25rem;
     cursor: pointer;
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     border-left: 4px solid transparent;
 }
 
