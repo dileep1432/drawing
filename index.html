@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Drawing Tutor & Masterclass</title>
+    <title>AI Paper Drawing Tutor & Masterclass</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
 </head>
 <body>
     <header class="app-header">
-        <div class="logo">🎨 AI Drawing Tutor</div>
+        <div class="logo">🎨 AI Paper Drawing Tutor</div>
         <nav class="mode-selector">
             <button class="mode-btn active" data-mode="beginner">👶 Kids & Beginner</button>
             <button class="mode-btn" data-mode="pencil">✏️ Realistic Pencil</button>
@@ -19,11 +19,12 @@
     </header>
 
     <main class="app-container">
-        <!-- Sidebar / Controls -->
+        <!-- Sidebar Controls -->
         <section class="control-panel">
             <div class="card upload-card">
-                <h2>1. Upload Reference</h2>
+                <h2>1. Upload Your Image</h2>
                 <input type="file" id="imageInput" accept="image/*">
+                <p class="hint">Upload any photo you want to draw on your paper!</p>
                 <div class="sample-buttons">
                     <button class="sample-btn" data-preset="portrait">Portrait</button>
                     <button class="sample-btn" data-preset="object">Cylinder/Object</button>
@@ -32,29 +33,23 @@
             </div>
 
             <div class="card steps-card">
-                <h2>2. Drawing Stages</h2>
+                <h2>2. Step-by-Step Drawing Stages</h2>
                 <div id="stagesList" class="stages-list"></div>
             </div>
 
             <div class="card tools-card">
-                <h2>3. Pencil & Pen Techniques</h2>
+                <h2>3. Pencil Grip & Technique</h2>
                 <div id="techniqueTip" class="technique-tip">
-                    <p><strong>Current Grip:</strong> <span id="gripName">Tripod (Writing) Grip</span></p>
-                    <p id="gripDesc">Best for fine details, sharp edges, and clean outlines.</p>
-                </div>
-                <div class="pencil-selector">
-                    <button class="pencil-btn active" data-grade="HB">HB (Light)</button>
-                    <button class="pencil-btn" data-grade="2B">2B (Mid)</button>
-                    <button class="pencil-btn" data-grade="8B">8B (Dark)</button>
-                    <button class="pencil-btn" data-grade="10B">10B (Deep)</button>
+                    <p><strong>Recommended Grip:</strong> <span id="gripName">Tripod (Writing) Grip</span></p>
+                    <p id="gripDesc">Hold lightly with fingers for clean construction lines on your paper.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Main Workspace -->
+        <!-- Main Workspace for Paper Guide -->
         <section class="workspace">
             <div class="workspace-header">
-                <span id="stageTitle">Stage 1: Structuralization & Basic Shapes</span>
+                <span id="stageTitle">Step 1: Overall Framing & Proportions</span>
                 <div class="nav-buttons">
                     <button id="prevBtn" class="btn">◀ Prev Step</button>
                     <span id="stepIndicator">1 / 10</span>
@@ -64,29 +59,23 @@
 
             <div class="canvas-comparison">
                 <div class="pane">
-                    <h3>Original Reference</h3>
+                    <h3>Original Reference Photo</h3>
                     <div class="canvas-wrapper">
                         <canvas id="refCanvas"></canvas>
                     </div>
                 </div>
                 <div class="pane">
-                    <h3>Step-by-Step Guide & Practice Canvas</h3>
+                    <h3>Paper Sketch Guide (Copy this onto your paper)</h3>
                     <div class="canvas-wrapper">
-                        <canvas id="drawCanvas"></canvas>
-                        <div class="canvas-toolbar">
-                            <button id="brushTool" class="tool-btn active">✏️ Draw</button>
-                            <button id="eraserTool" class="tool-btn">🧹 Eraser</button>
-                            <button id="clearCanvas" class="tool-btn">🔄 Clear</button>
-                            <button id="saveProgress" class="tool-btn primary">💾 Save Progress</button>
-                        </div>
+                        <canvas id="guideCanvas"></canvas>
                     </div>
                 </div>
             </div>
 
             <div class="card instruction-card">
-                <h3>Masterclass Instruction & Professional Guidance</h3>
-                <p id="gripTipText" class="tip-box">Pencil Grip: Tripod / Writing Grip (Light pressure).</p>
-                <p id="instructionText">Don't look at details yet. Break down your subject into simple 3D primitives: cylinders, boxes, spheres, and ovals. Establish spatial awareness and overall proportions on your page.</p>
+                <h3>How to draw this step on your paper:</h3>
+                <p id="gripTipText" class="tip-box">Pencil Grip: Tripod / Writing Grip (Very light pressure).</p>
+                <p id="instructionText">Lightly sketch a bounding box and centerlines on your paper to lock in the height and width of your subject.</p>
             </div>
         </section>
     </main>
