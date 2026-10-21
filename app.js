@@ -1,55 +1,62 @@
 const drawingStages = [
     {
-        title: "Step 1: Overall Framing & Proportions",
-        desc: "Trace the outer bounding box and central balance axes. This locks in the height and width so your drawing never looks distorted or out of place."
+        title: "Step 1: Overall Bounding Box & Framing",
+        grip: "Pencil Grip: Tripod Grip (Very light pressure - easy to erase).",
+        desc: "Look at your reference photo. On your physical paper, lightly draw a rectangular box that matches the total width and height of the subject. This stops your drawing from going off the page!"
     },
     {
-        title: "Step 2: Primitive 3D Block-In",
-        desc: "Draw basic ovals, boxes, and cylinders over the main body masses. Ignore all details here—only focus on the underlying 3D structure."
+        title: "Step 2: Centerlines & Symmetry Axes",
+        grip: "Pencil Grip: Tripod Grip (Light pressure).",
+        desc: "Lightly draw a vertical line straight down the middle of your box, and horizontal lines where major features sit. This is your roadmap for placing everything correctly on paper."
     },
     {
-        title: "Step 3: Contour & Bending Curves",
-        desc: "Refine the outer silhouette. Smooth out the geometric boxes into organic curves, neck angles, and shoulder slopes."
+        title: "Step 3: Basic 3D Primitive Shapes",
+        grip: "Pencil Grip: Extended Tripod Grip.",
+        desc: "Ignore small details. Draw simple ovals for heads, circles for joints, and boxes for torsos or objects right inside your bounding box on your paper."
     },
     {
-        title: "Step 4: Centerlines & Landmark Placement",
-        desc: "Draw your vertical and horizontal crosshairs where eyes, nose, mouth, or central features intersect."
+        title: "Step 4: Contour & Shape Bending",
+        grip: "Pencil Grip: Tripod Grip.",
+        desc: "Smooth out your geometric shapes into organic curves. Connect shoulders, jawlines, or object edges following the contour of your reference photo."
     },
     {
-        title: "Step 5: Primary Feature Outlines",
-        desc: "Draw clean, confident contour lines for the eyes, nose, lips, hair partition, or primary object edges."
+        title: "Step 5: Primary Feature Placement",
+        grip: "Pencil Grip: Standard Writing Grip.",
+        desc: "Using your crosshairs from Step 2, sketch the exact placement of eyes, nose, mouth, or main object openings on your paper."
     },
     {
-        title: "Step 6: Shadow Boundary Mapping",
-        desc: "Outline the exact shapes where light stops and shadows begin. Separating light from shadow is the secret to realism."
+        title: "Step 6: Clean Outlines & Landmark Edges",
+        grip: "Pencil Grip: Sharp Tripod Grip (HB Pencil).",
+        desc: "Firm up your final outer outlines and feature lines. Erase your overlapping construction lines and messy guidelines gently."
     },
     {
-        title: "Step 7: Base Gradient Shading",
-        desc: "Fill in midtones and secondary shadows using smooth, even strokes (overhand pencil grip)."
+        title: "Step 7: Light Mapping & Shadow Boundaries",
+        grip: "Pencil Grip: Overhead Grip (Hold pencil from the back).",
+        desc: "Look at where shadows fall on your reference. Lightly outline the boundary shapes where light stops and shadow begins on your paper sketch."
     },
     {
-        title: "Step 8: Core Shadows & Deep Accents",
-        desc: "Darken the deepest recesses, occlusion points, and core shadows to give your drawing genuine weight and pop."
+        title: "Step 8: Base Shading & Midtone Gradients",
+        grip: "Pencil Grip: Overhand Loose Grip (2B Pencil).",
+        desc: "Using the side of your pencil lead rather than the tip, lay down smooth, even midtone shading across the shadow regions on your paper."
     },
     {
-        title: "Step 9: Highlights & Specular Reflections",
-        desc: "Lift out highlights with an eraser or add bright white strokes where light hits directly."
+        title: "Step 9: Core Shadows & Deep Accents",
+        grip: "Pencil Grip: Precision Grip (8B/10B Pencil).",
+        desc: "Darken the deepest creases, eye sockets, and occlusion shadows on your paper to give your drawing rich contrast and 3D depth."
     },
     {
-        title: "Step 10: Final Polish & Masterpiece",
-        desc: "Clean up smudges, check overall contrast, and sign your finished drawing!"
+        title: "Step 10: Final Highlights & Polish",
+        grip: "Tool: Kneaded Eraser / White Pen.",
+        desc: "Lift out bright highlights using an eraser or white pen. Compare your paper drawing with the reference on your screen and sign your work!"
     }
 ];
 
 let currentStage = 0;
 let currentMode = 'beginner';
-let currentPencil = 'HB';
-let isEraser = false;
-
 const refCanvas = document.getElementById('refCanvas');
-const drawCanvas = document.getElementById('drawCanvas');
+const guideCanvas = document.getElementById('guideCanvas');
 const refCtx = refCanvas.getContext('2d');
-const drawCtx = drawCanvas.getContext('2d');
+const guideCtx = guideCanvas.getContext('2d');
 let uploadedImage = new Image();
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -62,8 +69,8 @@ window.addEventListener('DOMContentLoaded', () => {
 function initCanvasSize() {
     refCanvas.width = 400;
     refCanvas.height = 400;
-    drawCanvas.width = 400;
-    drawCanvas.height = 400;
+    guideCanvas.width = 400;
+    guideCanvas.height = 400;
 }
 
 function setupEventListeners() {
@@ -72,14 +79,6 @@ function setupEventListeners() {
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
             currentMode = e.target.dataset.mode;
-        });
-    });
-
-    document.querySelectorAll('.pencil-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.pencil-btn').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            currentPencil = e.target.dataset.grade;
         });
     });
 
@@ -114,87 +113,6 @@ function setupEventListeners() {
             updateStage();
         }
     });
-
-    document.getElementById('brushTool').addEventListener('click', () => {
-        isEraser = false;
-        document.getElementById('brushTool').classList.add('active');
-        document.getElementById('eraserTool').classList.remove('active');
-    });
-
-    document.getElementById('eraserTool').addEventListener('click', () => {
-        isEraser = true;
-        document.getElementById('eraserTool').classList.add('active');
-        document.getElementById('brushTool').classList.remove('active');
-    });
-
-    document.getElementById('clearCanvas').addEventListener('click', () => {
-        drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-        redrawStageCanvas();
-    });
-
-    document.getElementById('saveProgress').addEventListener('click', () => {
-        const link = document.createElement('a');
-        link.download = `drawing-step-${currentStage + 1}.png`;
-        link.href = drawCanvas.toDataURL();
-        link.click();
-    });
-
-    let drawing = false;
-    const startDraw = (e) => {
-        drawing = true;
-        drawCtx.beginPath();
-        const pos = getPos(e);
-        drawCtx.moveTo(pos.x, pos.y);
-    };
-
-    const draw = (e) => {
-        if (!drawing) return;
-        const pos = getPos(e);
-        drawCtx.lineTo(pos.x, pos.y);
-        drawCtx.strokeStyle = isEraser ? '#1e293b' : (currentMode === 'pen' ? '#ffffff' : getPencilColor());
-        drawCtx.lineWidth = isEraser ? 24 : (currentMode === 'pen' ? 2 : getPencilWidth());
-        drawCtx.lineCap = 'round';
-        drawCtx.stroke();
-    };
-
-    const stopDraw = () => { drawing = false; };
-
-    drawCanvas.addEventListener('mousedown', startDraw);
-    drawCanvas.addEventListener('mousemove', draw);
-    window.addEventListener('mouseup', stopDraw);
-    drawCanvas.addEventListener('touchstart', (e) => { startDraw(e.touches[0]); e.preventDefault(); });
-    drawCanvas.addEventListener('touchmove', (e) => { draw(e.touches[0]); e.preventDefault(); });
-    drawCanvas.addEventListener('touchend', stopDraw);
-}
-
-function getPos(e) {
-    const rect = drawCanvas.getBoundingClientRect();
-    const scaleX = drawCanvas.width / rect.width;
-    const scaleY = drawCanvas.height / rect.height;
-    return {
-        x: (e.clientX - rect.left) * scaleX,
-        y: (e.clientY - rect.top) * scaleY
-    };
-}
-
-function getPencilColor() {
-    switch(currentPencil) {
-        case 'HB': return '#cbd5e1';
-        case '2B': return '#94a3b8';
-        case '8B': return '#64748b';
-        case '10B': return '#334155';
-        default: return '#cbd5e1';
-    }
-}
-
-function getPencilWidth() {
-    switch(currentPencil) {
-        case 'HB': return 2;
-        case '2B': return 3;
-        case '8B': return 6;
-        case '10B': return 9;
-        default: return 2;
-    }
 }
 
 function loadPreset(type) {
@@ -238,71 +156,79 @@ function getPresetSvg(type) {
 function processAndDisplayImage() {
     refCtx.clearRect(0, 0, refCanvas.width, refCanvas.height);
     refCtx.drawImage(uploadedImage, 0, 0, refCanvas.width, refCanvas.height);
-    redrawStageCanvas();
+    redrawGuideCanvas();
 }
 
-function redrawStageCanvas() {
-    drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+function redrawGuideCanvas() {
+    guideCtx.clearRect(0, 0, guideCanvas.width, guideCanvas.height);
     
-    drawCtx.save();
-    
-    // Progressive tracing guide drawn directly onto the practice canvas
+    // Show a faint ghost of the image so the user can see what step they are on
+    guideCtx.globalAlpha = 0.2;
+    guideCtx.drawImage(uploadedImage, 0, 0, guideCanvas.width, guideCanvas.height);
+    guideCtx.globalAlpha = 1.0;
+
+    guideCtx.save();
+    guideCtx.lineWidth = 3;
+
     if (currentStage === 0) {
         // Step 1: Bounding Box
-        drawCtx.strokeStyle = '#3b82f6';
-        drawCtx.lineWidth = 2;
-        drawCtx.setLineDash([4, 4]);
-        drawCtx.strokeRect(100, 50, 200, 300);
+        guideCtx.strokeStyle = '#3b82f6';
+        guideCtx.setLineDash([6, 6]);
+        guideCtx.strokeRect(90, 40, 220, 320);
     } else if (currentStage === 1) {
-        // Step 2: 3D Primitive Shapes
-        drawCtx.strokeStyle = '#60a5fa';
-        drawCtx.lineWidth = 2;
-        drawCtx.beginPath();
-        drawCtx.arc(200, 140, 75, 0, Math.PI * 2);
-        drawCtx.stroke();
-        drawCtx.strokeRect(130, 215, 140, 120);
+        // Step 2: Centerlines & Axes
+        guideCtx.strokeStyle = '#ef4444';
+        guideCtx.setLineDash([4, 4]);
+        guideCtx.beginPath();
+        guideCtx.moveTo(200, 40); guideCtx.lineTo(200, 360); // Vertical center
+        guideCtx.moveTo(90, 200); guideCtx.lineTo(310, 200); // Horizontal center
+        guideCtx.stroke();
     } else if (currentStage === 2) {
-        // Step 3: Contour & Bending curves
-        drawCtx.strokeStyle = '#38bdf8';
-        drawCtx.lineWidth = 2;
-        drawCtx.beginPath();
-        drawCtx.moveTo(125, 140);
-        drawCtx.quadraticCurveTo(200, 100, 275, 140);
-        drawCtx.quadraticCurveTo(280, 250, 270, 320);
-        drawCtx.quadraticCurveTo(200, 350, 130, 320);
-        drawCtx.quadraticCurveTo(120, 250, 125, 140);
-        drawCtx.stroke();
+        // Step 3: Primitive 3D Shapes
+        guideCtx.strokeStyle = '#60a5fa';
+        guideCtx.setLineDash([]);
+        guideCtx.beginPath();
+        guideCtx.arc(200, 140, 75, 0, Math.PI * 2);
+        guideCtx.stroke();
+        guideCtx.strokeRect(130, 220, 140, 130);
     } else if (currentStage === 3) {
-        // Step 4: Center Guidelines & Crosshairs
-        drawCtx.strokeStyle = '#f43f5e';
-        drawCtx.lineWidth = 1.5;
-        drawCtx.setLineDash([2, 2]);
-        drawCtx.beginPath();
-        drawCtx.moveTo(200, 50); drawCtx.lineTo(200, 350); // Vertical center
-        drawCtx.moveTo(100, 140); drawCtx.lineTo(300, 140); // Eye line
-        drawCtx.moveTo(100, 220); drawCtx.lineTo(300, 220); // Nose line
-        drawCtx.moveTo(100, 280); drawCtx.lineTo(300, 280); // Lip line
-        drawCtx.stroke();
+        // Step 4: Contour curves
+        guideCtx.strokeStyle = '#38bdf8';
+        guideCtx.setLineDash([]);
+        guideCtx.beginPath();
+        guideCtx.moveTo(125, 140);
+        guideCtx.quadraticCurveTo(200, 95, 275, 140);
+        guideCtx.quadraticCurveTo(285, 250, 270, 330);
+        guideCtx.quadraticCurveTo(200, 370, 130, 330);
+        guideCtx.quadraticCurveTo(115, 250, 125, 140);
+        guideCtx.stroke();
     } else if (currentStage === 4) {
-        // Step 5: Exact Feature Outlines (Eyes, Nose, Mouth)
-        drawCtx.strokeStyle = '#a855f7';
-        drawCtx.lineWidth = 2;
-        drawCtx.setLineDash([]);
-        drawCtx.beginPath();
-        // Eyes
-        drawCtx.arc(165, 140, 15, 0, Math.PI * 2);
-        drawCtx.arc(235, 140, 15, 0, Math.PI * 2);
-        // Nose & Mouth
-        drawCtx.moveTo(190, 210); drawCtx.lineTo(200, 230); drawCtx.lineTo(210, 210);
-        drawCtx.moveTo(170, 280); drawCtx.quadraticCurveTo(200, 295, 230, 280);
-        drawCtx.stroke();
+        // Step 5: Primary Feature Placement
+        guideCtx.strokeStyle = '#a855f7';
+        guideCtx.setLineDash([]);
+        guideCtx.beginPath();
+        guideCtx.arc(165, 140, 16, 0, Math.PI * 2);
+        guideCtx.arc(235, 140, 16, 0, Math.PI * 2);
+        guideCtx.moveTo(190, 210); guideCtx.lineTo(200, 230); guideCtx.lineTo(210, 210);
+        guideCtx.moveTo(165, 280); guideCtx.quadraticCurveTo(200, 295, 235, 280);
+        guideCtx.stroke();
+    } else if (currentStage === 5) {
+        // Step 6: Clean Outlines
+        guideCtx.strokeStyle = '#22c55e';
+        guideCtx.setLineDash([]);
+        guideCtx.beginPath();
+        guideCtx.arc(200, 140, 75, 0, Math.PI * 2);
+        guideCtx.moveTo(125, 200); guideCtx.lineTo(125, 330);
+        guideCtx.moveTo(275, 200); guideCtx.lineTo(275, 330);
+        guideCtx.stroke();
     } else {
-        // Steps 6-10: Faint ghost reference overlay for precise shading & tracing practice
-        drawCtx.globalAlpha = 0.35;
-        drawCtx.drawImage(uploadedImage, 0, 0, drawCanvas.width, drawCanvas.height);
+        // Steps 7-10: Shading & Final Details Guide
+        guideCtx.strokeStyle = '#facc15';
+        guideCtx.setLineDash([]);
+        guideCtx.strokeRect(130, 180, 140, 150);
     }
     
-    drawCtx.restore();
+    guideCtx.restore();
 }
 
 function renderStagesList() {
@@ -322,9 +248,9 @@ function renderStagesList() {
 
 function updateStage() {
     document.getElementById('stageTitle').textContent = drawingStages[currentStage].title;
-    document.getElementById('gripTipText').textContent = `Step-by-Step Drawing Guide`;
+    document.getElementById('gripTipText').textContent = drawingStages[currentStage].grip;
     document.getElementById('instructionText').textContent = drawingStages[currentStage].desc;
     document.getElementById('stepIndicator').textContent = `${currentStage + 1} / ${drawingStages.length}`;
     renderStagesList();
-    redrawStageCanvas();
+    redrawGuideCanvas();
 }
