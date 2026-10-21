@@ -1,27 +1,65 @@
 const drawingStages = [
-    { title: "Stage 1: Structuralization & Basic Shapes", desc: "Break down the reference into primitive 3D shapes (boxes, cylinders, spheres, and ovals). Establish spatial awareness and proportions." },
-    { title: "Stage 2: Shape Manipulation & Bending", desc: "Apply contour manipulation, twisting, bending, or stretching to primitives to match organic curves." },
-    { title: "Stage 3: Observation & Contour Lines", desc: "Observe the primary subject without technical complexity. Sketch clean outlines and major landmark boundaries." },
-    { title: "Stage 4: Internal Features Placement", desc: "Map out secondary features (eyes, nose, lips, joints, or interior panels) using center guidelines." },
-    { title: "Stage 5: Light Direction & Shadows", desc: "Identify the primary light source. Mark highlight zones, half-tones, and core shadow boundaries." },
-    { title: "Stage 6: Base Shading & Midtones", desc: "Use the Overhand Grip (shading pencil) for uniform gradient layers across large shadow areas." },
-    { title: "Stage 7: Core Shadows & Occlusion", desc: "Deepen core shadows and cast shadows to create realistic 3D depth and weight." },
-    { title: "Stage 8: Fine Details & Textures", desc: "Switch to the Tripod Grip with a sharpened HB/2B pencil for fine textures, hair strands, or skin gradients." },
-    { title: "Stage 9: Highlights & Accents", desc: "Lift out highlights with an eraser or apply white pen accents for glowing reflections." },
-    { title: "Stage 10: Final Masterpiece", desc: "Review proportions, contrast balance, edge control, and finalize your complete drawing." }
+    {
+        title: "Stage 1: Structuralization & Basic Shapes",
+        tip: "Pencil Grip: Tripod / Writing Grip (Light pressure).",
+        desc: "Don't look at details yet. Break down your subject into simple 3D primitives: cylinders, boxes, spheres, and ovals. Establish spatial awareness and overall proportions on your page."
+    },
+    {
+        title: "Stage 2: Shape Manipulation & Bending",
+        tip: "Pencil Grip: Extended Tripod Grip.",
+        desc: "Apply contour manipulation, bending, or stretching to your primitive shapes to match organic curves (like a bent cylinder for a neck or arm, or a tapered box for a torso)."
+    },
+    {
+        title: "Stage 3: Observation & Landmark Outlines",
+        tip: "Pencil Grip: Tripod Grip (Sharp point).",
+        desc: "Observe the reference without being manipulated by details. Sketch clean landmark boundaries, outer silhouettes, and major structural contours."
+    },
+    {
+        title: "Stage 4: Centerlines & Internal Features",
+        tip: "Pencil Grip: Standard Tripod Grip.",
+        desc: "Map out secondary features (eyes, nose, lips, joints, or interior panels) using center guidelines and symmetry axes to ensure nothing is crooked or out of proportion."
+    },
+    {
+        title: "Stage 5: Light Source & Shadow Mapping",
+        tip: "Pencil Grip: Overhead Grip (Holding from the back).",
+        desc: "Identify where your primary light source is coming from. Lightly outline your highlight zones, midtones, core shadow boundaries, and cast shadows."
+    },
+    {
+        title: "Stage 6: Base Shading & Midtones (Overhand)",
+        tip: "Pencil Grip: Super Overhand Loose Grip.",
+        desc: "Hold your pencil from the back using your whole arm (not just your wrist) to lay down smooth, uniform midtone gradient layers across shadow areas without harsh lines."
+    },
+    {
+        title: "Stage 7: Core Shadows & Occlusion",
+        tip: "Pencil Grip: Extended Tripod / 2B-4B Pencil.",
+        desc: "Deepen core shadows and occlusion shadows (where objects touch or overlap) to create realistic 3D weight, depth, and volume."
+    },
+    {
+        title: "Stage 8: Fine Details & Textures",
+        tip: "Pencil Grip: Precision Tripod Grip (Sharp 8B/10B).",
+        desc: "Add fine textures, hair strands, skin gradients, or cross-hatching. Keep strokes flowing in the natural direction of the subject's form."
+    },
+    {
+        title: "Stage 9: Highlights & Edge Cleanup",
+        tip: "Tool: Kneaded Eraser / White Gel Pen.",
+        desc: "Lift out glowing highlights using a sharpened eraser or add bright specular reflections with a white gel pen. Clean up messy background smudges."
+    },
+    {
+        title: "Stage 10: Final Masterpiece Review",
+        tip: "Review Step: Stand back and compare contrast.",
+        desc: "Check your overall tonal contrast, edge control, and proportions against the reference. Your complete masterclass drawing is now finished!"
+    }
 ];
 
 let currentStage = 0;
 let currentMode = 'beginner';
 let currentPencil = 'HB';
-let isDrawing = false;
 let isEraser = false;
 
 const refCanvas = document.getElementById('refCanvas');
 const drawCanvas = document.getElementById('drawCanvas');
 const refCtx = refCanvas.getContext('2d');
 const drawCtx = drawCanvas.getContext('2d');
-
 let uploadedImage = new Image();
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -39,7 +77,6 @@ function initCanvasSize() {
 }
 
 function setupEventListeners() {
-    // Mode Switching
     document.querySelectorAll('.mode-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
@@ -49,7 +86,6 @@ function setupEventListeners() {
         });
     });
 
-    // Pencil Selector
     document.querySelectorAll('.pencil-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             document.querySelectorAll('.pencil-btn').forEach(b => b.classList.remove('active'));
@@ -58,14 +94,12 @@ function setupEventListeners() {
         });
     });
 
-    // Presets
     document.querySelectorAll('.sample-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             loadPreset(e.target.dataset.preset);
         });
     });
 
-    // Image Upload
     document.getElementById('imageInput').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -78,7 +112,6 @@ function setupEventListeners() {
         }
     });
 
-    // Navigation
     document.getElementById('prevBtn').addEventListener('click', () => {
         if (currentStage > 0) {
             currentStage--;
@@ -93,7 +126,6 @@ function setupEventListeners() {
         }
     });
 
-    // Drawing Tools
     document.getElementById('brushTool').addEventListener('click', () => {
         isEraser = false;
         document.getElementById('brushTool').classList.add('active');
@@ -118,9 +150,7 @@ function setupEventListeners() {
         link.click();
     });
 
-    // Canvas Mouse / Touch Drawing
     let drawing = false;
-
     const startDraw = (e) => {
         drawing = true;
         drawCtx.beginPath();
@@ -132,20 +162,17 @@ function setupEventListeners() {
         if (!drawing) return;
         const pos = getPos(e);
         drawCtx.lineTo(pos.x, pos.y);
-        drawCtx.strokeStyle = isEraser ? '#000000' : (currentMode === 'pen' ? '#ffffff' : getPencilColor());
-        drawCtx.lineWidth = isEraser ? 20 : (currentMode === 'pen' ? 2 : getPencilWidth());
+        drawCtx.strokeStyle = isEraser ? '#1e293b' : (currentMode === 'pen' ? '#ffffff' : getPencilColor());
+        drawCtx.lineWidth = isEraser ? 24 : (currentMode === 'pen' ? 2 : getPencilWidth());
         drawCtx.lineCap = 'round';
         drawCtx.stroke();
     };
 
-    const stopDraw = () => {
-        drawing = false;
-    };
+    const stopDraw = () => { drawing = false; };
 
     drawCanvas.addEventListener('mousedown', startDraw);
     drawCanvas.addEventListener('mousemove', draw);
     window.addEventListener('mouseup', stopDraw);
-
     drawCanvas.addEventListener('touchstart', (e) => { startDraw(e.touches[0]); e.preventDefault(); });
     drawCanvas.addEventListener('touchmove', (e) => { draw(e.touches[0]); e.preventDefault(); });
     drawCanvas.addEventListener('touchend', stopDraw);
@@ -175,8 +202,8 @@ function getPencilWidth() {
     switch(currentPencil) {
         case 'HB': return 2;
         case '2B': return 3;
-        case '8B': return 5;
-        case '10B': return 7;
+        case '8B': return 6;
+        case '10B': return 9;
         default: return 2;
     }
 }
@@ -193,12 +220,12 @@ function getPresetSvg(type) {
     if (type === 'portrait') {
         return `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
             <rect width="400" height="400" fill="#1e293b"/>
-            <circle cx="200" cy="160" r="80" fill="#cbd5e1" opacity="0.8"/>
-            <path d="M 140 220 Q 200 320 260 220 Z" fill="#94a3b8"/>
-            <ellipse cx="175" cy="150" rx="12" ry="8" fill="#0f172a"/>
-            <ellipse cx="225" cy="150" rx="12" ry="8" fill="#0f172a"/>
-            <path d="M 200 160 L 190 200 L 210 200 Z" fill="#64748b"/>
-            <path d="M 175 230 Q 200 250 225 230" stroke="#0f172a" stroke-width="4" fill="none"/>
+            <circle cx="200" cy="150" r="75" fill="#cbd5e1" opacity="0.8"/>
+            <path d="M 130 210 Q 200 310 270 210 Z" fill="#94a3b8"/>
+            <ellipse cx="170" cy="140" rx="10" ry="7" fill="#0f172a"/>
+            <ellipse cx="230" cy="140" rx="10" ry="7" fill="#0f172a"/>
+            <path d="M 200 150 L 195 190 L 205 190 Z" fill="#64748b"/>
+            <path d="M 175 225 Q 200 245 225 225" stroke="#0f172a" stroke-width="3" fill="none"/>
         </svg>`;
     } else if (type === 'object') {
         return `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
@@ -228,27 +255,29 @@ function processAndDisplayImage() {
 function redrawStageCanvas() {
     drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
     
-    // Draw guide overlay based on stage
     drawCtx.save();
-    drawCtx.strokeStyle = 'rgba(59, 130, 246, 0.5)';
+    drawCtx.strokeStyle = 'rgba(96, 165, 250, 0.7)';
     drawCtx.lineWidth = 2;
-    drawCtx.setLineDash([5, 5]);
+    drawCtx.setLineDash([6, 6]);
 
     if (currentStage === 0) {
-        // Basic Shapes
-        drawCtx.strokeRect(120, 80, 160, 200);
+        drawCtx.strokeRect(125, 75, 150, 210);
         drawCtx.beginPath();
-        drawCtx.arc(200, 160, 75, 0, Math.PI * 2);
+        drawCtx.arc(200, 150, 70, 0, Math.PI * 2);
         drawCtx.stroke();
     } else if (currentStage === 1) {
-        // Construction lines / symmetry
+        drawCtx.beginPath();
+        drawCtx.moveTo(200, 60); drawCtx.quadraticCurveTo(220, 200, 200, 340);
+        drawCtx.moveTo(120, 150); drawCtx.quadraticCurveTo(200, 130, 280, 150);
+        drawCtx.stroke();
+    } else if (currentStage === 2 || currentStage === 3) {
         drawCtx.beginPath();
         drawCtx.moveTo(200, 50); drawCtx.lineTo(200, 350);
-        drawCtx.moveTo(50, 200); drawCtx.lineTo(350, 200);
+        drawCtx.moveTo(80, 150); drawCtx.lineTo(320, 150);
+        drawCtx.moveTo(80, 220); drawCtx.lineTo(320, 220);
         drawCtx.stroke();
     } else {
-        // Faint reference outline for practice
-        drawCtx.globalAlpha = 0.25;
+        drawCtx.globalAlpha = 0.3;
         drawCtx.drawImage(uploadedImage, 0, 0, drawCanvas.width, drawCanvas.height);
     }
     drawCtx.restore();
@@ -271,6 +300,7 @@ function renderStagesList() {
 
 function updateStage() {
     document.getElementById('stageTitle').textContent = drawingStages[currentStage].title;
+    document.getElementById('gripTipText').textContent = drawingStages[currentStage].tip;
     document.getElementById('instructionText').textContent = drawingStages[currentStage].desc;
     document.getElementById('stepIndicator').textContent = `${currentStage + 1} / ${drawingStages.length}`;
     renderStagesList();
@@ -282,12 +312,12 @@ function updateTechniqueInfo() {
     const desc = document.getElementById('gripDesc');
     if (currentMode === 'beginner') {
         name.textContent = "Tripod Grip (Writing Grip)";
-        desc.textContent = "Best for easy outlines, simple shapes, and kids/beginner guidance.";
+        desc.textContent = "Best for simple outlines, basic shapes, and clear step-by-step kid-friendly tracing.";
     } else if (currentMode === 'pencil') {
-        name.textContent = "Overhead & Extended Tripod Grip";
-        desc.textContent = "Hold pencil from the back for smooth shading, light gradients, and 3D form building.";
+        name.textContent = "Overhead & Extended Overhand Grip";
+        desc.textContent = "Hold pencil from the back with your whole arm for smooth gradients, shadow mapping, and 3D volume.";
     } else {
         name.textContent = "Precision Pen & Hatching Grip";
-        desc.textContent = "Firm grip for clean ink lines, cross-hatching, stippling, and high-contrast accents.";
+        desc.textContent = "Firm control for clean ink contours, cross-hatching, stippling, and sharp high-contrast accents.";
     }
 }
