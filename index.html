@@ -21,12 +21,12 @@
         <!-- Sidebar Control Panel -->
         <aside class="sidebar">
             <div class="glass-card upload-section">
-                <h2>1. Upload Your Image</h2>
+                <h2>1. Upload Reference Image</h2>
                 <label for="imageInput" class="custom-file-upload">
                     📂 Choose Reference Image
                 </label>
                 <input type="file" id="imageInput" accept="image/*">
-                <p class="helper-text">AI reads your exact image pixels, scans contrast, and builds 10 custom paper steps.</p>
+                <p class="helper-text">AI scans every pixel, extracts edges, and builds 10 custom paper steps.</p>
                 <div class="preset-grid">
                     <button class="preset-btn" data-preset="portrait">👤 Portrait</button>
                     <button class="preset-btn" data-preset="object">🏺 Cylinder Object</button>
@@ -34,11 +34,11 @@
             </div>
 
             <div class="glass-card analysis-section">
-                <h2>🔍 Live Pixel Scan Analysis</h2>
+                <h2>🔍 Deep Pixel & Edge Analysis</h2>
                 <div class="stats-box">
-                    <div class="stat-row"><span>Image Size:</span> <strong id="statDim">0 x 0px</strong></div>
-                    <div class="stat-row"><span>Brightness / Tone:</span> <strong id="statTone">Analyzing...</strong></div>
-                    <div class="stat-row"><span>Detected Structure:</span> <strong id="statSubject">Awaiting Upload</strong></div>
+                    <div class="stat-row"><span>Image Dimensions:</span> <strong id="statDim">0 x 0px</strong></div>
+                    <div class="stat-row"><span>Tonal Contrast:</span> <strong id="statTone">Analyzing...</strong></div>
+                    <div class="stat-row"><span>Edge Density:</span> <strong id="statEdges">Pending Scan</strong></div>
                 </div>
             </div>
 
@@ -69,7 +69,7 @@
                     </div>
                 </div>
                 <div class="canvas-card highlight-card">
-                    <div class="card-header">AI Pixel-Scanned Guide (Copy to Paper)</div>
+                    <div class="card-header">AI Pixel-Scanned Blueprint Guide (Copy to Paper)</div>
                     <div class="canvas-container">
                         <canvas id="guideCanvas"></canvas>
                     </div>
@@ -81,7 +81,7 @@
                     <h3>💡 Professional Paper Instruction</h3>
                     <span id="gripTipText" class="grip-tag">Pencil Grip: Tripod Grip (Light pressure)</span>
                 </div>
-                <p id="instructionText">Upload your image to let the AI vision scanner read your photo and generate custom blueprints for your paper!</p>
+                <p id="instructionText">Upload your image to let the AI vision scanner read every pixel and generate custom blueprints for your physical paper!</p>
             </div>
         </section>
     </main>
