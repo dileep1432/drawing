@@ -3,75 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Vision Paper Drawing Tutor</title>
+    <title>AI Vision Paper Drawing Masterclass</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#0f172a">
 </head>
 <body>
     <header class="app-header">
-        <div class="logo">🎨 AI Vision Drawing Masterclass</div>
-        <div class="status-badge" id="aiStatus">Ready to Scan Image</div>
+        <div class="logo-area">
+            <span class="logo-icon">🎨</span>
+            <h1>AI Drawing Masterclass</h1>
+        </div>
+        <div class="header-badge" id="aiStatus">Ready to Scan Reference</div>
     </header>
 
-    <main class="app-container">
-        <!-- Sidebar Controls -->
-        <section class="control-panel">
-            <div class="card upload-card">
-                <h2>1. Upload Your Image</h2>
+    <main class="app-layout">
+        <!-- Sidebar Control Panel -->
+        <aside class="sidebar">
+            <div class="glass-card upload-section">
+                <h2>1. Upload Reference</h2>
+                <label for="imageInput" class="custom-file-upload">
+                    📂 Choose Image File
+                </label>
                 <input type="file" id="imageInput" accept="image/*">
-                <p class="hint">The AI will scan your image pixels and generate 10 custom steps for your paper!</p>
-                <div class="sample-buttons">
-                    <button class="sample-btn" data-preset="portrait">Sample Portrait</button>
-                    <button class="sample-btn" data-preset="object">Sample Object</button>
+                <p class="helper-text">Upload any photo — AI scans dimensions & builds 10 paper steps.</p>
+                <div class="preset-grid">
+                    <button class="preset-btn" data-preset="portrait">👤 Portrait</button>
+                    <button class="preset-btn" data-preset="object">🏺 Object</button>
                 </div>
             </div>
 
-            <div class="card steps-card">
-                <h2>2. Generated Drawing Steps (10 Stages)</h2>
-                <div id="stagesList" class="stages-list"></div>
-            </div>
-
-            <div class="card analysis-card">
-                <h2>AI Image Vision Stats</h2>
-                <div id="analysisStats" class="analysis-stats">
-                    <p>Dimensions: <span id="statDim">0 x 0</span></p>
-                    <p>Detected Subject: <span id="statSubject">Awaiting Upload</span></p>
-                    <p>Complexity: <span id="statComplex">Standard</span></p>
+            <div class="glass-card analysis-section">
+                <h2>🔍 AI Vision Analysis</h2>
+                <div class="stats-box">
+                    <div class="stat-row"><span>Dimensions:</span> <strong id="statDim">0 x 0px</strong></div>
+                    <div class="stat-row"><span>Subject Type:</span> <strong id="statSubject">Awaiting Upload</strong></div>
+                    <div class="stat-row"><span>Aspect Ratio:</span> <strong id="statComplex">1.00</strong></div>
                 </div>
             </div>
-        </section>
 
-        <!-- Main Workspace -->
+            <div class="glass-card steps-section">
+                <h2>2. 10-Step Drawing Path</h2>
+                <div id="stagesList" class="stages-scroll-container"></div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
         <section class="workspace">
-            <div class="workspace-header">
-                <span id="stageTitle">Step 1: Overall Framing & Bounding Box</span>
-                <div class="nav-buttons">
-                    <button id="prevBtn" class="btn">◀ Prev Step</button>
-                    <span id="stepIndicator">1 / 10</span>
-                    <button id="nextBtn" class="btn primary">Next Step ▶</button>
+            <div class="workspace-topbar">
+                <div class="title-wrap">
+                    <span id="stepCounterBadge" class="step-counter">Step 1 of 10</span>
+                    <h2 id="stageTitle">Overall Bounding Box & Outer Framing</h2>
+                </div>
+                <div class="nav-controls">
+                    <button id="prevBtn" class="nav-btn">◀ Prev</button>
+                    <button id="nextBtn" class="nav-btn primary">Next Step ▶</button>
                 </div>
             </div>
 
-            <div class="canvas-comparison">
-                <div class="pane">
-                    <h3>Your Uploaded Reference</h3>
-                    <div class="canvas-wrapper">
+            <div class="canvas-grid">
+                <div class="canvas-card">
+                    <div class="card-header">Original Photo Reference</div>
+                    <div class="canvas-container">
                         <canvas id="refCanvas"></canvas>
                     </div>
                 </div>
-                <div class="pane">
-                    <h3>Paper Blueprint Guide (Copy to your paper)</h3>
-                    <div class="canvas-wrapper">
+                <div class="canvas-card highlight-card">
+                    <div class="card-header">Paper Construction Guide (Copy to Paper)</div>
+                    <div class="canvas-container">
                         <canvas id="guideCanvas"></canvas>
                     </div>
                 </div>
             </div>
 
-            <div class="card instruction-card">
-                <h3>Paper Sketch Instructions:</h3>
-                <p id="gripTipText" class="tip-box">Pencil Grip: Tripod Grip (Light construction lines).</p>
-                <p id="instructionText">Upload an image above to automatically analyze its structure and generate custom step-by-step paper instructions!</p>
+            <div class="glass-card instruction-panel">
+                <div class="instruction-header">
+                    <h3>💡 Professional Paper Instruction</h3>
+                    <span id="gripTipText" class="grip-tag">Pencil Grip: Tripod Grip (Light pressure)</span>
+                </div>
+                <p id="instructionText">Upload an image above or pick a sample preset to begin generating your custom step-by-step paper drawing blueprint!</p>
             </div>
         </section>
     </main>
