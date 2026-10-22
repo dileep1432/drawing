@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Professional Paper Drawing Tutor</title>
+    <title>AI Loomis & Reilly Masterclass Tutor</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
 </head>
 <body>
     <header class="app-header">
-        <div class="logo">🎨 AI Pro Drawing Masterclass</div>
+        <div class="logo">🎨 Loomis & Reilly Masterclass</div>
         <nav class="mode-selector">
-            <button class="mode-btn active" data-mode="pro">🎓 Pro Masterclass</button>
-            <button class="mode-btn" data-mode="anatomy">👤 Figure & Portrait</button>
-            <button class="mode-btn" data-mode="render">✏️ Realistic Shading</button>
+            <button class="mode-btn active" data-mode="loomis">🧠 Loomis Method</button>
+            <button class="mode-btn" data-mode="reilly">🌊 Reilly Rhythms</button>
         </nav>
     </header>
 
@@ -22,38 +21,33 @@
         <!-- Sidebar Controls -->
         <section class="control-panel">
             <div class="card upload-card">
-                <h2>1. Upload Your Reference</h2>
+                <h2>1. Upload Portrait Reference</h2>
                 <input type="file" id="imageInput" accept="image/*">
-                <p class="hint">Upload any photo — the AI will auto-recognize its structure and build custom drawing steps!</p>
+                <p class="hint">Upload any face to apply professional cranial construction lines!</p>
                 <div class="sample-buttons">
-                    <button class="sample-btn" data-preset="portrait">Portrait</button>
-                    <button class="sample-btn" data-preset="figure">Human Figure</button>
-                    <button class="sample-btn" data-preset="object">Cylinder / Object</button>
-                </div>
-            </div>
-
-            <div class="card analysis-card">
-                <h2>AI Image Recognition</h2>
-                <div id="analysisStats" class="analysis-stats">
-                    <p>Status: <span id="statusText">Ready for image upload</span></p>
-                    <p>Subject Type: <span id="subjectType">General Reference</span></p>
-                    <p>Lighting: <span id="lightingType">Standard Studio</span></p>
+                    <button class="sample-btn" data-preset="portrait">Standard Face</button>
+                    <button class="sample-btn" data-preset="angle">Angled Profile</button>
                 </div>
             </div>
 
             <div class="card steps-card">
-                <h2>2. Step-by-Step Paper Guide</h2>
+                <h2>2. Construction Steps</h2>
                 <div id="stagesList" class="stages-list"></div>
+            </div>
+
+            <div class="card analysis-card">
+                <h2>Masterclass Principle</h2>
+                <p id="methodDesc" class="method-desc">Building the head as a 3D sphere with sliced temporal planes and proportional thirds.</p>
             </div>
         </section>
 
         <!-- Main Workspace -->
         <section class="workspace">
             <div class="workspace-header">
-                <span id="stageTitle">Step 1: Structuralization & Bounding Framing</span>
+                <span id="stageTitle">Step 1: The Cranial Sphere & Sliced Sides</span>
                 <div class="nav-buttons">
                     <button id="prevBtn" class="btn">◀ Prev Step</button>
-                    <span id="stepIndicator">1 / 8</span>
+                    <span id="stepIndicator">1 / 6</span>
                     <button id="nextBtn" class="btn primary">Next Step ▶</button>
                 </div>
             </div>
@@ -74,9 +68,9 @@
             </div>
 
             <div class="card instruction-card">
-                <h3 id="instructionHeading">Masterclass Technique & Paper Instruction</h3>
-                <p id="gripTipText" class="tip-box">Pencil Grip: Tripod / Writing Grip (Very light pressure).</p>
-                <p id="instructionText">Upload an image above to generate custom step-by-step instructions tailored specifically to your subject!</p>
+                <h3>Paper Sketch Instructions:</h3>
+                <p id="gripTipText" class="tip-box">Pencil Grip: Tripod Grip (Light construction lines).</p>
+                <p id="instructionText">Lightly sketch a circle representing the brain case. Flatten the left and right sides to establish your temporal side-planes.</p>
             </div>
         </section>
     </main>
