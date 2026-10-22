@@ -1,61 +1,62 @@
 let currentStage = 0;
-let analysisData = {
+let pixelAnalysis = {
     width: 400,
     height: 400,
-    aspectRatio: 1.0,
-    subject: "Portrait / Face Reference"
+    avgBrightness: 128,
+    contrastLevel: "Standard",
+    subjectHint: "General Subject"
 };
 
 const drawingStages = [
     {
-        title: "Overall Bounding Box & Outer Framing",
+        title: "Step 1: Outer Framing & Proportional Box",
         grip: "Pencil Grip: Tripod Grip (Very light pressure)",
-        desc: "Examine your reference photo on screen. On your physical paper, lightly sketch a bounding box matching the exact outer boundaries of your subject to lock in proportions."
+        desc: "The AI pixel scanner has read your image boundaries. On your physical paper, lightly sketch a box matching your image's exact aspect ratio."
     },
     {
-        title: "Centerlines & Symmetry Axes",
+        title: "Step 2: Centerlines & Symmetry Crosshairs",
         grip: "Pencil Grip: Tripod Grip (Light pressure)",
-        desc: "Draw a vertical center line straight down the middle and horizontal crosshairs across your paper box. This prevents any lopsided features."
+        desc: "Draw a vertical center line straight down the middle and a horizontal crosshair across your paper box to lock in your coordinate grid."
     },
     {
-        title: "3D Primitive Volumes (Spheres & Boxes)",
+        title: "Step 3: 3D Primitive Volumes",
         grip: "Pencil Grip: Extended Tripod Grip",
-        desc: "Break down the analyzed image masses into basic 3D shapes: spheres for heads/main masses and rectangular blocks for lower structures."
+        desc: "Break down the analyzed image masses into basic 3D spheres, ovals, and rectangular blocks to establish spatial depth."
     },
     {
-        title: "Contour Bending & Organic Flow",
+        title: "Step 4: Contour Bending & Organic Flow",
         grip: "Pencil Grip: Extended Overhand Grip",
-        desc: "Smooth out your geometric shapes into organic curves following the gesture and silhouette of your scanned image."
+        desc: "Smooth out your geometric shapes into organic curves following the scanned gesture and silhouette of your image."
     },
     {
-        title: "Landmark Feature Mapping",
+        title: "Step 5: Landmark Feature Mapping",
         grip: "Pencil Grip: Standard Writing Grip",
-        desc: "Map out the primary focal points (eyes, central features, or core object edges) using your crosshairs as a coordinate map."
+        desc: "Map out the primary focal points and internal features using your crosshairs as an accurate placement guide."
     },
     {
-        title: "Clean Outlines & Edge Refinement",
-        grip: "Pencil Grip: Sharp HB Pencil (Tripod Grip)",
+        title: "Step 6: Clean Outlines & Edge Refinement",
+        grip: "Pencil Grip: Sharp HB Pencil",
         desc: "Draw confident final contour outlines over your construction lines and gently erase overlapping guidelines."
     },
     {
-        title: "Light Mapping & Shadow Boundaries",
-        grip: "Pencil Grip: Overhead Grip (Holding from the back)",
-        desc: "Scan the lighting on your reference photo. Lightly outline the exact boundary shapes where light stops and shadows begin."
+        title: "Step 7: Light Mapping & Shadow Boundaries",
+        grip: "Pencil Grip: Overhead Grip (Holding pencil from the back)",
+        desc: "Scan the lighting values on your reference photo. Lightly outline the exact boundary shapes where light stops and shadows begin."
     },
     {
-        title: "Base Midtone Gradients",
+        title: "Step 8: Base Midtone Gradients",
         grip: "Pencil Grip: Super Overhand Loose Grip (2B Pencil)",
         desc: "Using the side of your pencil lead, lay down smooth, uniform midtone gradient layers across all shadow regions."
     },
     {
-        title: "Core Shadows & Deep Occlusion",
+        title: "Step 9: Core Shadows & Deep Occlusion",
         grip: "Pencil Grip: Precision Tripod Grip (8B/10B)",
         desc: "Deepen core shadows and occlusion areas where objects touch or overlap to give your paper drawing rich 3D weight."
     },
     {
-        title: "Highlights, Polish & Final Review",
+        title: "Step 10: Highlights, Polish & Final Review",
         grip: "Tool: Kneaded Eraser / White Gel Pen",
-        desc: "Lift out glowing highlights with an eraser, check your overall tonal contrast against the screen reference, and sign your completed artwork!"
+        desc: "Lift out glowing highlights with an eraser, check your overall tonal contrast against the screen reference, and sign your artwork!"
     }
 ];
 
@@ -92,8 +93,8 @@ function setupEventListeners() {
             const reader = new FileReader();
             reader.onload = (event) => {
                 uploadedImage.onload = () => {
-                    analyzeImagePixels();
                     processAndDisplayImage();
+                    scanImagePixels();
                 };
                 uploadedImage.src = event.target.result;
             };
@@ -116,25 +117,49 @@ function setupEventListeners() {
     });
 }
 
-function analyzeImagePixels() {
-    const w = uploadedImage.width;
-    const h = uploadedImage.height;
-    analysisData.width = w;
-    analysisData.height = h;
-    analysisData.aspectRatio = (w / h).toFixed(2);
+function scanImagePixels() {
+    // Read actual image pixels from the canvas to analyze brightness and contrast
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = 100;
+    tempCanvas.height = 100;
+    const tempCtx = tempCanvas.getContext('2d');
+    tempCtx.drawImage(uploadedImage, 0, 0, 100, 100);
+    
+    const imgData = tempCtx.getImageData(0, 0, 100, 100);
+    const data = imgData.data;
+    let totalBrightness = 0;
+    
+    for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i+1];
+        const b = data[i+2];
+        // Standard luminance formula
+        const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+        totalBrightness += brightness;
+    }
+    
+    const avg = Math.round(totalBrightness / (100 * 100));
+    pixelAnalysis.avgBrightness = avg;
+    pixelAnalysis.width = uploadedImage.width;
+    pixelAnalysis.height = uploadedImage.height;
 
-    if (w / h < 0.85) {
-        analysisData.subject = "Tall Subject / Full Body";
-    } else if (w / h > 1.15) {
-        analysisData.subject = "Landscape / Wide Object";
+    if (avg < 80) {
+        pixelAnalysis.contrastLevel = "Dark / High Shadow Density";
+    } else if (avg > 180) {
+        pixelAnalysis.contrastLevel = "Bright / High Key Lighting";
     } else {
-        analysisData.subject = "Portrait / Face Reference";
+        pixelAnalysis.contrastLevel = "Balanced Midtone Lighting";
     }
 
-    document.getElementById('aiStatus').textContent = "AI Vision Scan Active ✓";
-    document.getElementById('statDim').textContent = `${w} x ${h}px`;
-    document.getElementById('statSubject').textContent = analysisData.subject;
-    document.getElementById('statComplex').textContent = analysisData.aspectRatio;
+    const ar = uploadedImage.width / uploadedImage.height;
+    if (ar < 0.85) pixelAnalysis.subjectHint = "Vertical / Full Figure";
+    else if (ar > 1.15) pixelAnalysis.subjectHint = "Horizontal / Wide Layout";
+    else pixelAnalysis.subjectHint = "Balanced Square Subject";
+
+    document.getElementById('aiStatus').textContent = "Pixel Scan Active ✓";
+    document.getElementById('statDim').textContent = `${pixelAnalysis.width} x ${pixelAnalysis.height}px`;
+    document.getElementById('statTone').textContent = pixelAnalysis.contrastLevel;
+    document.getElementById('statSubject').textContent = pixelAnalysis.subjectHint;
 }
 
 function loadPreset(type) {
@@ -142,8 +167,8 @@ function loadPreset(type) {
     const blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
     const url = URL.createObjectURL(blob);
     uploadedImage.onload = () => {
-        analyzeImagePixels();
         processAndDisplayImage();
+        scanImagePixels();
     };
     uploadedImage.src = url;
 }
@@ -178,14 +203,15 @@ function processAndDisplayImage() {
 function redrawGuideCanvas() {
     guideCtx.clearRect(0, 0, guideCanvas.width, guideCanvas.height);
     
-    guideCtx.globalAlpha = 0.28;
+    // Ghost overlay of the exact pixels of the uploaded image
+    guideCtx.globalAlpha = 0.3;
     guideCtx.drawImage(uploadedImage, 0, 0, guideCanvas.width, guideCanvas.height);
     guideCtx.globalAlpha = 1.0;
 
     guideCtx.save();
     guideCtx.lineWidth = 2.5;
 
-    const ar = parseFloat(analysisData.aspectRatio) || 1.0;
+    const ar = uploadedImage.width / uploadedImage.height || 1.0;
     let boxW = 240, boxH = 240;
     if (ar > 1) { boxH = boxW / ar; } else { boxW = boxH * ar; }
     const startX = (400 - boxW) / 2;
