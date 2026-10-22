@@ -3,42 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Pixel-Vision Paper Drawing Masterclass</title>
+    <title>AI Computer Vision Drawing Masterclass</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
+    <!-- Load TensorFlow.js and MobileNet AI Vision Model for true image recognition -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.0/dist/mobilenet.min.js"></script>
 </head>
 <body>
     <header class="app-header">
         <div class="logo-area">
             <span class="logo-icon">🎨</span>
-            <h1>AI Pixel-Vision Drawing Tutor</h1>
+            <h1>AI Vision-Powered Drawing Tutor</h1>
         </div>
-        <div class="header-badge" id="aiStatus">Ready to Scan Image Pixels</div>
+        <div class="header-badge" id="aiStatus">Awaiting Image Scan</div>
     </header>
 
     <main class="app-layout">
         <!-- Sidebar Control Panel -->
         <aside class="sidebar">
             <div class="glass-card upload-section">
-                <h2>1. Upload Reference Image</h2>
+                <h2>1. Upload Your Reference</h2>
                 <label for="imageInput" class="custom-file-upload">
-                    📂 Choose Reference Image
+                    📂 Choose Image to Read
                 </label>
                 <input type="file" id="imageInput" accept="image/*">
-                <p class="helper-text">AI scans every pixel, extracts edges, and builds 10 custom paper steps.</p>
+                <p class="helper-text">AI Vision will analyze your photo's contents and generate custom step-by-step paper instructions.</p>
                 <div class="preset-grid">
-                    <button class="preset-btn" data-preset="portrait">👤 Portrait</button>
-                    <button class="preset-btn" data-preset="object">🏺 Cylinder Object</button>
+                    <button class="preset-btn" data-preset="portrait">👤 Portrait Face</button>
+                    <button class="preset-btn" data-preset="object">🏺 Object / Item</button>
                 </div>
             </div>
 
             <div class="glass-card analysis-section">
-                <h2>🔍 Deep Pixel & Edge Analysis</h2>
+                <h2>🤖 AI Neural Vision Recognition</h2>
                 <div class="stats-box">
-                    <div class="stat-row"><span>Image Dimensions:</span> <strong id="statDim">0 x 0px</strong></div>
-                    <div class="stat-row"><span>Tonal Contrast:</span> <strong id="statTone">Analyzing...</strong></div>
-                    <div class="stat-row"><span>Edge Density:</span> <strong id="statEdges">Pending Scan</strong></div>
+                    <div class="stat-row"><span>AI Model Status:</span> <strong id="statModel">Loading AI...</strong></div>
+                    <div class="stat-row"><span>Detected Subject:</span> <strong id="statSubject">Scanning pixels...</strong></div>
+                    <div class="stat-row"><span>Confidence Score:</span> <strong id="statConf">0%</strong></div>
                 </div>
             </div>
 
@@ -69,7 +72,7 @@
                     </div>
                 </div>
                 <div class="canvas-card highlight-card">
-                    <div class="card-header">AI Pixel-Scanned Blueprint Guide (Copy to Paper)</div>
+                    <div class="card-header">AI-Generated Paper Blueprint Guide</div>
                     <div class="canvas-container">
                         <canvas id="guideCanvas"></canvas>
                     </div>
@@ -81,7 +84,7 @@
                     <h3>💡 Professional Paper Instruction</h3>
                     <span id="gripTipText" class="grip-tag">Pencil Grip: Tripod Grip (Light pressure)</span>
                 </div>
-                <p id="instructionText">Upload your image to let the AI vision scanner read every pixel and generate custom blueprints for your physical paper!</p>
+                <p id="instructionText">Upload your image above to let the AI neural network read its contents and guide you step by step!</p>
             </div>
         </section>
     </main>
