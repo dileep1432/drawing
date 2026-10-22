@@ -1,52 +1,69 @@
 let currentStage = 0;
-let imageAnalysis = {
-    type: "Portrait / Face",
-    width: 400,
-    height: 400,
-    aspectRatio: 1.0,
-    primaryColor: "Balanced Tone"
-};
+let currentMethod = 'loomis';
 
-const drawingStages = [
+const loomisStages = [
     {
-        title: "Step 1: Structuralization & Bounding Box",
-        grip: "Pencil Grip: Tripod / Writing Grip (Very light pressure - easy to erase).",
-        desc: "Examine your reference photo on screen. On your physical paper, lightly sketch a bounding box matching the total outer dimensions of your subject. This anchors your proportions correctly."
+        title: "Step 1: The Cranial Ball",
+        grip: "Pencil Grip: Tripod / Writing Grip (Very light pressure).",
+        desc: "Draw a circular ball representing the cranium. Do not worry about perfection—this is your base 3D volume."
     },
     {
-        title: "Step 2: Centerlines & Symmetry Axes",
-        grip: "Pencil Grip: Tripod Grip (Light pressure).",
-        desc: "Draw a vertical center axis straight down your box and horizontal landmark dividers. This is your professional roadmap to prevent features from becoming lopsided."
+        title: "Step 2: Sliced Temporal Planes",
+        grip: "Pencil Grip: Extended Tripod.",
+        desc: "Slice off the left and right sides of your sphere to create flat vertical planes where the ears and temples sit."
     },
     {
-        title: "Step 3: 3D Primitive Block-In (Boxes & Ovals)",
-        grip: "Pencil Grip: Extended Tripod Grip.",
-        desc: "Ignore all details. Break down the subject into basic 3D volumes: spheres for heads/joints, cylinders for limbs/necks, and boxes for torsos or solid objects."
-    },
-    {
-        title: "Step 4: Shape Manipulation & Bending",
-        grip: "Pencil Grip: Extended Overhand Grip.",
-        desc: "Apply contour manipulation and bending. Smooth out your geometric shapes into organic curves following the gesture and flow of your reference."
-    },
-    {
-        title: "Step 5: Primary Feature Mapping",
+        title: "Step 3: Brow Line & Center Crosshairs",
         grip: "Pencil Grip: Standard Writing Grip.",
-        desc: "Using your crosshairs from Step 2, map out the exact placement boundaries for eyes, nose, mouth, joints, or primary subject focal points."
+        desc: "Draw a horizontal brow line across the middle of the sphere and a vertical center line down the front of the face."
     },
     {
-        title: "Step 6: Clean Outlines & Landmark Contours",
-        grip: "Pencil Grip: Sharp Tripod Grip (HB Pencil).",
-        desc: "Draw clean, confident final contour outlines over your construction lines. Gently erase overlapping guidelines."
+        title: "Step 4: Proportional Thirds (Hairline to Chin)",
+        grip: "Pencil Grip: Light Pressure.",
+        desc: "Measure equal thirds from Hairline ➔ Brow Line ➔ Bottom of Nose ➔ Bottom of Chin."
     },
     {
-        title: "Step 7: Light Mapping & Shadow Boundaries",
-        grip: "Pencil Grip: Overhead Grip (Holding pencil from the back).",
-        desc: "Identify your light source direction. Lightly outline the exact boundary shapes where light stops and shadows begin on your paper."
+        title: "Step 5: Jawline & Feature Placement",
+        grip: "Pencil Grip: Precision Grip.",
+        desc: "Drop the jaw down from the temporal planes. Place eyes right below the brow line, nose at the 2nd third, and mouth one-third down."
     },
     {
-        title: "Step 8: Gradients, Core Shadows & Polish",
-        grip: "Pencil Grip: Super Overhand Loose Grip (2B-8B Pencils).",
-        desc: "Lay down smooth midtone gradients, deepen core shadows and occlusion points, lift highlights with an eraser, and sign your completed artwork!"
+        title: "Step 6: Final Tonal Rendering",
+        grip: "Pencil Grip: Overhand Loose Grip.",
+        desc: "Erase structural guidelines, map your core shadow boundaries, and apply smooth midtone shading."
+    }
+];
+
+const reillyStages = [
+    {
+        title: "Step 1: Egg Envelope & Centerline Flow",
+        grip: "Pencil Grip: Loose Overhand Grip (Whole arm movement).",
+        desc: "Draw a 3:2 egg-shaped oval and a sweeping center gesture line to capture the dynamic tilt and rhythm of the head."
+    },
+    {
+        title: "Step 2: Hairline & Brow Rhythms",
+        grip: "Pencil Grip: Extended Tripod.",
+        desc: "Map out the flowing rhythm arcs for the hairline and the arching brow line across the upper cranium."
+    },
+    {
+        title: "Step 3: The Muzzle & Cheekbone Rhythms",
+        grip: "Pencil Grip: Smooth Shading Grip.",
+        desc: "Draw the central 'muzzle' oval around the nose and mouth area, and sweep rhythm lines outward across the cheekbones."
+    },
+    {
+        title: "Step 4: Interlocking Facial Features",
+        grip: "Pencil Grip: Standard Writing Grip.",
+        desc: "Construct the eyes within their socket shadow shapes and interlock the nose and lip planes into the surrounding facial flow."
+    },
+    {
+        title: "Step 5: Planar Shadow Mapping",
+        grip: "Pencil Grip: Overhead Grip.",
+        desc: "Separate your light family from your shadow family by mapping out the abstract shadow planes defined by your rhythm lines."
+    },
+    {
+        title: "Step 6: Final Contrast & Accents",
+        grip: "Pencil Grip: Sharp 8B/10B Pencil.",
+        desc: "Deepen occlusion shadows, add rich contrast, and finish your professional Reilly-method portrait."
     }
 ];
 
@@ -71,6 +88,20 @@ function initCanvasSize() {
 }
 
 function setupEventListeners() {
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            currentMethod = e.target.dataset.mode;
+            currentStage = 0;
+            document.getElementById('methodDesc').textContent = currentMethod === 'loomis' ? 
+                "Building the head as a 3D sphere with sliced temporal planes and proportional thirds." :
+                "Abstracting the head into fluid rhythms, flowing contours, and interlocking planar zones.";
+            renderStagesList();
+            updateStage();
+        });
+    });
+
     document.querySelectorAll('.sample-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             loadPreset(e.target.dataset.preset);
@@ -82,10 +113,7 @@ function setupEventListeners() {
         if (file) {
             const reader = new FileReader();
             reader.onload = (event) => {
-                uploadedImage.onload = () => {
-                    analyzeUploadedImage();
-                    processAndDisplayImage();
-                };
+                uploadedImage.onload = () => processAndDisplayImage();
                 uploadedImage.src = event.target.result;
             };
             reader.readAsDataURL(file);
@@ -93,6 +121,7 @@ function setupEventListeners() {
     });
 
     document.getElementById('prevBtn').addEventListener('click', () => {
+        const stages = currentMethod === 'loomis' ? loomisStages : reillyStages;
         if (currentStage > 0) {
             currentStage--;
             updateStage();
@@ -100,72 +129,32 @@ function setupEventListeners() {
     });
 
     document.getElementById('nextBtn').addEventListener('click', () => {
-        if (currentStage < drawingStages.length - 1) {
+        const stages = currentMethod === 'loomis' ? loomisStages : reillyStages;
+        if (currentStage < stages.length - 1) {
             currentStage++;
             updateStage();
         }
     });
 }
 
-function analyzeUploadedImage() {
-    const w = uploadedImage.width;
-    const h = uploadedImage.height;
-    const ratio = w / h;
-    imageAnalysis.width = w;
-    imageAnalysis.height = h;
-    imageAnalysis.aspectRatio = ratio;
-
-    if (ratio < 0.85) {
-        imageAnalysis.type = "Standing Figure / Tall Subject";
-    } else if (ratio > 1.15) {
-        imageAnalysis.type = "Landscape / Wide Object";
-    } else {
-        imageAnalysis.type = "Portrait / Balanced Subject";
-    }
-
-    document.getElementById('statusText').textContent = "Analysis Complete ✓";
-    document.getElementById('subjectType').textContent = imageAnalysis.type;
-    document.getElementById('lightingType').textContent = "Dynamic Contrast Detected";
-}
-
 function loadPreset(type) {
     const svgData = getPresetSvg(type);
     const blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
     const url = URL.createObjectURL(blob);
-    uploadedImage.onload = () => {
-        analyzeUploadedImage();
-        processAndDisplayImage();
-    };
+    uploadedImage.onload = () => processAndDisplayImage();
     uploadedImage.src = url;
 }
 
 function getPresetSvg(type) {
-    if (type === 'portrait') {
-        return `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
-            <rect width="400" height="400" fill="#1e293b"/>
-            <circle cx="200" cy="150" r="75" fill="#cbd5e1" opacity="0.8"/>
-            <path d="M 130 210 Q 200 310 270 210 Z" fill="#94a3b8"/>
-            <ellipse cx="170" cy="140" rx="10" ry="7" fill="#0f172a"/>
-            <ellipse cx="230" cy="140" rx="10" ry="7" fill="#0f172a"/>
-            <path d="M 200 150 L 195 190 L 205 190 Z" fill="#64748b"/>
-            <path d="M 175 225 Q 200 245 225 225" stroke="#0f172a" stroke-width="3" fill="none"/>
-        </svg>`;
-    } else if (type === 'figure') {
-        return `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
-            <rect width="400" height="400" fill="#1e293b"/>
-            <circle cx="200" cy="80" r="30" fill="#cbd5e1"/>
-            <rect x="170" y="120" width="60" height="110" rx="10" fill="#94a3b8"/>
-            <line x1="170" y1="230" x2="150" y2="350" stroke="#94a3b8" stroke-width="12" stroke-linecap="round"/>
-            <line x1="230" y1="230" x2="250" y2="350" stroke="#94a3b8" stroke-width="12" stroke-linecap="round"/>
-        </svg>`;
-    } else {
-        return `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
-            <rect width="400" height="400" fill="#1e293b"/>
-            <ellipse cx="200" cy="120" rx="60" ry="25" fill="#60a5fa"/>
-            <path d="M 140 120 L 140 280 A 60 25 0 0 0 260 280 L 260 120 Z" fill="#3b82f6"/>
-            <ellipse cx="200" cy="280" rx="60" ry="25" fill="#2563eb"/>
-        </svg>`;
-    }
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+        <rect width="400" height="400" fill="#1e293b"/>
+        <circle cx="200" cy="150" r="75" fill="#cbd5e1" opacity="0.8"/>
+        <path d="M 130 210 Q 200 310 270 210 Z" fill="#94a3b8"/>
+        <ellipse cx="170" cy="140" rx="10" ry="7" fill="#0f172a"/>
+        <ellipse cx="230" cy="140" rx="10" ry="7" fill="#0f172a"/>
+        <path d="M 200 150 L 195 190 L 205 190 Z" fill="#64748b"/>
+        <path d="M 175 225 Q 200 245 225 225" stroke="#0f172a" stroke-width="3" fill="none"/>
+    </svg>`;
 }
 
 function processAndDisplayImage() {
@@ -177,7 +166,6 @@ function processAndDisplayImage() {
 function redrawGuideCanvas() {
     guideCtx.clearRect(0, 0, guideCanvas.width, guideCanvas.height);
     
-    // Faint reference ghost so the user can easily map proportions
     guideCtx.globalAlpha = 0.25;
     guideCtx.drawImage(uploadedImage, 0, 0, guideCanvas.width, guideCanvas.height);
     guideCtx.globalAlpha = 1.0;
@@ -185,62 +173,90 @@ function redrawGuideCanvas() {
     guideCtx.save();
     guideCtx.lineWidth = 3;
 
-    if (currentStage === 0) {
-        // Step 1: Bounding Box
-        guideCtx.strokeStyle = '#3b82f6';
-        guideCtx.setLineDash([6, 6]);
-        guideCtx.strokeRect(80, 40, 240, 320);
-    } else if (currentStage === 1) {
-        // Step 2: Centerlines & Axes
-        guideCtx.strokeStyle = '#ef4444';
-        guideCtx.setLineDash([4, 4]);
-        guideCtx.beginPath();
-        guideCtx.moveTo(200, 40); guideCtx.lineTo(200, 360);
-        guideCtx.moveTo(80, 200); guideCtx.lineTo(320, 200);
-        guideCtx.stroke();
-    } else if (currentStage === 2) {
-        // Step 3: 3D Primitive Shapes
-        guideCtx.strokeStyle = '#60a5fa';
-        guideCtx.setLineDash([]);
-        guideCtx.beginPath();
-        guideCtx.arc(200, 130, 65, 0, Math.PI * 2);
-        guideCtx.stroke();
-        guideCtx.strokeRect(130, 210, 140, 130);
-    } else if (currentStage === 3) {
-        // Step 4: Contour Bending
-        guideCtx.strokeStyle = '#38bdf8';
-        guideCtx.setLineDash([]);
-        guideCtx.beginPath();
-        guideCtx.moveTo(135, 130);
-        guideCtx.quadraticCurveTo(200, 90, 265, 130);
-        guideCtx.quadraticCurveTo(280, 240, 265, 330);
-        guideCtx.quadraticCurveTo(200, 370, 135, 330);
-        guideCtx.quadraticCurveTo(120, 240, 135, 130);
-        guideCtx.stroke();
-    } else if (currentStage === 4) {
-        // Step 5: Feature Mapping
-        guideCtx.strokeStyle = '#a855f7';
-        guideCtx.setLineDash([]);
-        guideCtx.beginPath();
-        guideCtx.arc(165, 135, 15, 0, Math.PI * 2);
-        guideCtx.arc(235, 135, 15, 0, Math.PI * 2);
-        guideCtx.moveTo(190, 200); guideCtx.lineTo(200, 220); guideCtx.lineTo(210, 200);
-        guideCtx.moveTo(170, 275); guideCtx.quadraticCurveTo(200, 290, 230, 275);
-        guideCtx.stroke();
-    } else if (currentStage === 5) {
-        // Step 6: Clean Outlines
-        guideCtx.strokeStyle = '#22c55e';
-        guideCtx.setLineDash([]);
-        guideCtx.beginPath();
-        guideCtx.arc(200, 130, 65, 0, Math.PI * 2);
-        guideCtx.moveTo(135, 195); guideCtx.lineTo(135, 330);
-        guideCtx.moveTo(265, 195); guideCtx.lineTo(265, 330);
-        guideCtx.stroke();
+    if (currentMethod === 'loomis') {
+        if (currentStage === 0) {
+            // Cranial Sphere
+            guideCtx.strokeStyle = '#3b82f6';
+            guideCtx.beginPath();
+            guideCtx.arc(200, 160, 80, 0, Math.PI * 2);
+            guideCtx.stroke();
+        } else if (currentStage === 1) {
+            // Sliced Side Planes
+            guideCtx.strokeStyle = '#60a5fa';
+            guideCtx.beginPath();
+            guideCtx.arc(200, 160, 80, 0, Math.PI * 2);
+            guideCtx.moveTo(135, 100); guideCtx.lineTo(135, 220);
+            guideCtx.moveTo(265, 100); guideCtx.lineTo(265, 220);
+            guideCtx.stroke();
+        } else if (currentStage === 2) {
+            // Brow Line & Center Crosshair
+            guideCtx.strokeStyle = '#ef4444';
+            guideCtx.beginPath();
+            guideCtx.arc(200, 160, 80, 0, Math.PI * 2);
+            guideCtx.moveTo(200, 80); guideCtx.lineTo(200, 360); // Center line
+            guideCtx.moveTo(120, 160); guideCtx.lineTo(280, 160); // Brow line
+            guideCtx.stroke();
+        } else if (currentStage === 3) {
+            // Proportional Thirds
+            guideCtx.strokeStyle = '#facc15';
+            guideCtx.beginPath();
+            guideCtx.moveTo(200, 80); guideCtx.lineTo(200, 360);
+            guideCtx.moveTo(150, 100); guideCtx.lineTo(250, 100); // Hairline
+            guideCtx.moveTo(120, 160); guideCtx.lineTo(280, 160); // Brow line
+            guideCtx.moveTo(150, 240); guideCtx.lineTo(250, 240); // Nose base
+            guideCtx.moveTo(160, 320); guideCtx.lineTo(240, 320); // Chin
+            guideCtx.stroke();
+        } else if (currentStage === 4) {
+            // Jawline & Features
+            guideCtx.strokeStyle = '#22c55e';
+            guideCtx.beginPath();
+            guideCtx.arc(200, 160, 80, 0, Math.PI * 2);
+            guideCtx.moveTo(135, 220); guideCtx.lineTo(160, 320); guideCtx.lineTo(240, 320); guideCtx.lineTo(265, 220);
+            guideCtx.stroke();
+        } else {
+            // Tonal Shading
+            guideCtx.strokeStyle = '#a855f7';
+            guideCtx.strokeRect(120, 80, 160, 260);
+        }
     } else {
-        // Steps 7 & 8: Shading & Final Polish Guide
-        guideCtx.strokeStyle = '#facc15';
-        guideCtx.setLineDash([]);
-        guideCtx.strokeRect(120, 170, 160, 160);
+        // Reilly Rhythms
+        if (currentStage === 0) {
+            // Egg Envelope & Gesture Centerline
+            guideCtx.strokeStyle = '#38bdf8';
+            guideCtx.beginPath();
+            guideCtx.ellipse(200, 200, 85, 115, 0, 0, Math.PI * 2);
+            guideCtx.moveTo(200, 75); guideCtx.lineTo(200, 335);
+            guideCtx.stroke();
+        } else if (currentStage === 1) {
+            // Hairline & Brow Rhythms
+            guideCtx.strokeStyle = '#f43f5e';
+            guideCtx.beginPath();
+            guideCtx.ellipse(200, 200, 85, 115, 0, 0, Math.PI * 2);
+            guideCtx.arc(200, 140, 65, Math.PI, 0);
+            guideCtx.stroke();
+        } else if (currentStage === 2) {
+            // Muzzle & Cheekbone Rhythms
+            guideCtx.strokeStyle = '#a855f7';
+            guideCtx.beginPath();
+            guideCtx.ellipse(200, 230, 40, 30, 0, 0, Math.PI * 2); // Muzzle
+            guideCtx.moveTo(160, 180); guideCtx.quadraticCurveTo(200, 210, 240, 180); // Cheekbones
+            guideCtx.stroke();
+        } else if (currentStage === 3) {
+            // Interlocking Features
+            guideCtx.strokeStyle = '#22c55e';
+            guideCtx.beginPath();
+            guideCtx.arc(170, 175, 14, 0, Math.PI * 2);
+            guideCtx.arc(230, 175, 14, 0, Math.PI * 2);
+            guideCtx.stroke();
+        } else if (currentStage === 4) {
+            // Planar Shadow Mapping
+            guideCtx.strokeStyle = '#facc15';
+            guideCtx.strokeRect(130, 140, 140, 180);
+        } else {
+            // Final Accents
+            guideCtx.strokeStyle = '#ffffff';
+            guideCtx.strokeRect(110, 70, 180, 280);
+        }
     }
     
     guideCtx.restore();
@@ -249,7 +265,8 @@ function redrawGuideCanvas() {
 function renderStagesList() {
     const list = document.getElementById('stagesList');
     list.innerHTML = '';
-    drawingStages.forEach((stage, index) => {
+    const stages = currentMethod === 'loomis' ? loomisStages : reillyStages;
+    stages.forEach((stage, index) => {
         const item = document.createElement('div');
         item.className = `stage-item ${index === currentStage ? 'active' : ''}`;
         item.textContent = `${index + 1}. ${stage.title.split(':')[1] || stage.title}`;
@@ -262,10 +279,11 @@ function renderStagesList() {
 }
 
 function updateStage() {
-    document.getElementById('stageTitle').textContent = drawingStages[currentStage].title;
-    document.getElementById('gripTipText').textContent = drawingStages[currentStage].grip;
-    document.getElementById('instructionText').textContent = drawingStages[currentStage].desc;
-    document.getElementById('stepIndicator').textContent = `${currentStage + 1} / ${drawingStages.length}`;
+    const stages = currentMethod === 'loomis' ? loomisStages : reillyStages;
+    document.getElementById('stageTitle').textContent = stages[currentStage].title;
+    document.getElementById('gripTipText').textContent = stages[currentStage].grip;
+    document.getElementById('instructionText').textContent = stages[currentStage].desc;
+    document.getElementById('stepIndicator').textContent = `${currentStage + 1} / ${stages.length}`;
     renderStagesList();
     redrawGuideCanvas();
 }
